@@ -2,8 +2,15 @@ import numpy as np
 
 
 class LinearRegression:
-    def __init__(self):
+    """Linear regression implementation.
+
+    :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regression is used)
+    """
+
+    def __init__(self, regularization_param=0):
+        assert regularization_param >= 0, "Regularization parameter must be >= 0, but was negative."
         self._coefs = None
+        self._regularization_param = regularization_param
 
     def fit(self, X, y):
         """Train the model.
@@ -13,7 +20,12 @@ class LinearRegression:
         """
         X = LinearRegression._add_intercept(X)
         X_T = X.transpose()
-        self._coefs = np.linalg.pinv(X_T @ X) @ X_T @ y
+
+        features_count = X_T.shape[0]
+        regularization_matrix = self._regularization_param*np.identity(features_count)
+        regularization_matrix[0, 0] = 0
+
+        self._coefs = np.linalg.pinv(X_T @ X + regularization_matrix) @ X_T @ y
 
     def predict(self, X):
         """Predict target values.
