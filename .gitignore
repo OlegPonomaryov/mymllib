@@ -1,3 +1,4 @@
 # PyCharm folders
 .idea
 .venv
+__pycache__
