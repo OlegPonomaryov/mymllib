@@ -82,11 +82,10 @@ class LinearRegression:
                 self._regularization_param * coefs_without_intercept) / X.shape[0]
 
     def _normal_equation(self, X, y):
-        X_T = X.transpose()
-        features_count = X_T.shape[0]
+        features_count = X.T.shape[0]
         regularization_matrix = self._regularization_param*np.identity(features_count)
         regularization_matrix[0, 0] = 0
-        self._coefs = np.linalg.pinv(X_T @ X + regularization_matrix) @ X_T @ y
+        self._coefs = np.linalg.pinv(X.T @ X + regularization_matrix) @ X.T @ y
 
     @staticmethod
     def _linear_func(X, coefs):
