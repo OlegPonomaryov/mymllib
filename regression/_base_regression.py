@@ -5,7 +5,7 @@ from ..optimization import gradient_descent
 class BaseRegression:
     """Base class for regressions that uses gradient descent to fit the model.
 
-    :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regression is used)
+    :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is used)
     :param learning_rate: Initial learning rate of gradient descent (can be automatically reduced if too high)
     :param accuracy: Accuracy of gradient descent
     :param max_iterations: Maximum iterations count of gradient descent

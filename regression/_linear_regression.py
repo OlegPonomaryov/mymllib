@@ -6,7 +6,7 @@ from ._base_regression import BaseRegression
 class LinearRegression(BaseRegression):
     """Linear regression implementation.
 
-    :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regression is used)
+    :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is used)
     :param use_gradient_descent: Whether to use gradient descent instead of normal equation to fit the model
     :param learning_rate: Initial learning rate of gradient descent (used only if use_gradient_descent set to True, can be automatically reduced if too high)
     :param accuracy: Accuracy of gradient descent (used only if use_gradient_descent set to True)
