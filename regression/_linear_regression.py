@@ -39,11 +39,11 @@ class LinearRegression(BaseRegression):
         return super().predict(add_intercept(X))
 
     def _hypothesis(self, X, coefs):
-        return X@coefs
+        return X @ coefs
 
     def _cost(self, coefs, X, y):
         return (((self._hypothesis(X, coefs) - y)**2).sum() +
-                self._regularization_param*(coefs[1:]**2).sum()) / X.shape[0]
+                self._regularization_param*(coefs[1:]**2).sum()) / (2 * X.shape[0])
 
     def _normal_equation(self, X, y):
         features_count = X.T.shape[0]
