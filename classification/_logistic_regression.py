@@ -28,7 +28,8 @@ class LogisticRegression:
         :param X: Features
         :param y: Target values
         """
-        labels = y.unique()
+        X, y = LogisticRegression._transform_to_numpy(X, y)
+        labels = np.unique(y)
         if len(labels) < 2:
             raise ValueError("There should be at least 2 different classes")
 
@@ -44,6 +45,7 @@ class LogisticRegression:
             self._binary_classifiers[label] = self._fit_binary_classifier(X, y, label)
 
     def predict(self, X):
+        X = LogisticRegression._transform_to_numpy(X)
         one_vs_all = dict()
         for label in self._binary_classifiers:
             one_vs_all[label] = self._binary_classifiers[label].predict(X)
@@ -68,6 +70,17 @@ class LogisticRegression:
             accuracy=self._accuracy, max_iterations=self._max_iterations)
         binary_classifier.fit(X, binary_y)
         return binary_classifier
+
+    @staticmethod
+    def _transform_to_numpy(X, y=None):
+        # Though, for instance, Pandas DataFrame and Series can be used as NumPy arrays, doing this results in severe
+        # decrease of performance, so features and target should be converted to pure NumPy arrays.
+        X = np.asarray(X)
+        if y is None:
+            return X
+        else:
+            y = np.asarray(y)
+            return X, y
 
 
 class _BinaryLogisticRegression(BaseRegression):
