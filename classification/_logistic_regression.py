@@ -1,4 +1,5 @@
 import numpy as np
+from ..optimization import GradientDescent
 from ..preprocessing import add_intercept
 from ..regression._linear_regression import BaseRegression
 
@@ -7,16 +8,12 @@ class LogisticRegression:
     """Logistic regression implementation.
 
     :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is used)
-    :param learning_rate: Initial learning rate of gradient descent (can be automatically reduced if too high)
-    :param accuracy: Accuracy of gradient descent
-    :param max_iterations: Maximum iterations count of gradient descent
+    :param optimizer: An optimizer to use for minimizing a cost function
     """
 
-    def __init__(self, regularization_param=0, learning_rate=1, accuracy=1E-5, max_iterations=10000):
+    def __init__(self, regularization_param=0, optimizer=GradientDescent()):
         self._regularization_param = regularization_param
-        self._learning_rate = learning_rate
-        self._accuracy = accuracy
-        self._max_iterations = max_iterations
+        self._optimizer = optimizer
 
         self._labels = None
         self._binary_classifiers = None
@@ -66,8 +63,7 @@ class LogisticRegression:
     def _fit_binary_classifier(self, X, y, label):
         binary_y = (y == label) * 1
         binary_classifier = _BinaryLogisticRegression(
-            threshold=None, regularization_param=self._regularization_param, learning_rate=self._learning_rate,
-            accuracy=self._accuracy, max_iterations=self._max_iterations)
+            threshold=None, regularization_param=self._regularization_param, optimizer=self._optimizer)
         binary_classifier.fit(X, binary_y)
         return binary_classifier
 
@@ -88,13 +84,11 @@ class _BinaryLogisticRegression(BaseRegression):
 
     :param threshold: A threshold for classification (if None than raw probabilities are returned)
     :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is used)
-    :param learning_rate: Initial learning rate of gradient descent (can be automatically reduced if too high)
-    :param accuracy: Accuracy of gradient descent
-    :param max_iterations: Maximum iterations count of gradient descent
+    :param optimizer: An optimizer to use for minimizing a cost function
     """
 
-    def __init__(self, threshold=0.5, regularization_param=0, learning_rate=1, accuracy=1E-5, max_iterations=10000):
-        super().__init__(regularization_param, learning_rate, accuracy, max_iterations)
+    def __init__(self, threshold=0.5, regularization_param=0, optimizer=GradientDescent()):
+        super().__init__(regularization_param=regularization_param, optimizer=optimizer)
         self._threshold = threshold
 
     def fit(self, X, y):

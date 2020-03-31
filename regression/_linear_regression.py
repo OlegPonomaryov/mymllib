@@ -7,16 +7,12 @@ class LinearRegression(BaseRegression):
     """Linear regression implementation.
 
     :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is used)
-    :param use_gradient_descent: Whether to use gradient descent instead of normal equation to fit the model
-    :param learning_rate: Initial learning rate of gradient descent (used only if use_gradient_descent set to True, can be automatically reduced if too high)
-    :param accuracy: Accuracy of gradient descent (used only if use_gradient_descent set to True)
-    :param max_iterations: Maximum iterations count of gradient descent (used only if use_gradient_descent set to True)
+    :param optimizer: An optimizer to use for minimizing a cost function (if None than analytical method will be used)
     """
 
-    def __init__(self, regularization_param=0, use_gradient_descent=False,
-                 learning_rate=1, accuracy=1E-5, max_iterations=10000):
-        super().__init__(regularization_param, learning_rate, accuracy, max_iterations)
-        self._use_gradient_descent = use_gradient_descent
+    def __init__(self, regularization_param=0, optimizer=None):
+        super().__init__(regularization_param=regularization_param, optimizer=optimizer)
+        self._optimizer = optimizer
 
     def fit(self, X, y):
         """Train the model.
@@ -25,7 +21,7 @@ class LinearRegression(BaseRegression):
         :param y: Target values
         """
         X = add_intercept(X)
-        if self._use_gradient_descent:
+        if self._optimizer is not None:
             super().fit(X, y)
         else:
             self._coefs = self._normal_equation(X, y)
