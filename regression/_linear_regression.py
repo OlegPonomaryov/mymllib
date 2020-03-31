@@ -20,6 +20,7 @@ class LinearRegression(BaseRegression):
         :param X: Features
         :param y: Target values
         """
+        X, y = LinearRegression._transform_to_numpy(X, y)
         X = add_intercept(X)
         if self._optimizer is not None:
             super().fit(X, y)
@@ -32,6 +33,7 @@ class LinearRegression(BaseRegression):
         :param X: Features
         :return: Target values
         """
+        X = LinearRegression._transform_to_numpy(X)
         return super().predict(add_intercept(X))
 
     def _hypothesis(self, X, coefs):
@@ -46,3 +48,14 @@ class LinearRegression(BaseRegression):
         regularization_matrix = self._regularization_param*np.identity(features_count)
         regularization_matrix[0, 0] = 0
         return np.linalg.pinv(X.T @ X + regularization_matrix) @ X.T @ y
+
+    @staticmethod
+    def _transform_to_numpy(X, y=None):
+        # Though, for instance, Pandas DataFrame and Series can be used as NumPy arrays, doing this results in severe
+        # decrease of performance, so features and target should be converted to pure NumPy arrays.
+        X = np.asarray(X)
+        if y is None:
+            return X
+        else:
+            y = np.asarray(y)
+            return X, y
