@@ -1,23 +1,19 @@
 import numpy as np
-from ..optimization import gradient_descent
+from ..optimization import GradientDescent
 
 
 class BaseRegression:
-    """Base class for regressions that uses gradient descent to fit the model.
+    """Base class for regressions.
 
     :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is used)
-    :param learning_rate: Initial learning rate of gradient descent (can be automatically reduced if too high)
-    :param accuracy: Accuracy of gradient descent
-    :param max_iterations: Maximum iterations count of gradient descent
+    :param optimizer: An optimizer to use for minimizing a cost function
     """
 
-    def __init__(self, regularization_param, learning_rate=1, accuracy=1E-5, max_iterations=10000):
+    def __init__(self, regularization_param, optimizer=GradientDescent()):
         assert regularization_param >= 0, "Regularization parameter must be >= 0, but was negative."
         self._regularization_param = regularization_param
         self._coefs = None
-        self._learning_rate = learning_rate
-        self._accuracy = accuracy
-        self._max_iterations = max_iterations
+        self._optimizer = optimizer
 
     def fit(self, X, y):
         """Train the model.
@@ -25,10 +21,9 @@ class BaseRegression:
         :param X: Features
         :param y: Target values
         """
-        self._coefs = gradient_descent(self._cost, self._cost_gradient,
-                                       np.zeros((X.shape[1], y.shape[1]) if y.ndim >= 2 else X.shape[1]),
-                                       (X, y),
-                                       self._learning_rate, self._accuracy, self._max_iterations)
+        self._coefs = self._optimizer.minimize(
+            self._cost, self._cost_gradient,
+            np.zeros((X.shape[1], y.shape[1]) if y.ndim >= 2 else X.shape[1]), (X, y))
 
     def predict(self, X):
         """Predict target values.

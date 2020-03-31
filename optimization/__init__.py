@@ -1,2 +1,2 @@
 """Provide different optimization algorithms."""
-from ._gradient_descent import gradient_descent
+from ._gradient_descent import GradientDescent

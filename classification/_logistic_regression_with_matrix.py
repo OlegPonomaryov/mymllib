@@ -1,4 +1,5 @@
 import numpy as np
+from ..optimization import GradientDescent
 from ..preprocessing import add_intercept
 from ..regression._linear_regression import BaseRegression
 
@@ -7,16 +8,12 @@ class LogisticRegressionWithMatrix(BaseRegression):
     """Logistic regression implementation that uses coefficients matrix for multiclass problems instead of separate binary classificators.
 
     :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is used)
-    :param learning_rate: Initial learning rate of gradient descent (can be automatically reduced if too high)
-    :param accuracy: Accuracy of gradient descent
-    :param max_iterations: Maximum iterations count of gradient descent
+    :param optimizer: An optimizer to use for minimizing a cost function
     :param predict_probabilities: Whether to return probabilities of samples to belong to each of the classes (ordered by their labels) instead of chosen classes
     """
 
-    def __init__(self, regularization_param=0, learning_rate=1, accuracy=1E-5,
-                 max_iterations=10000, predict_probabilities=False):
-        super().__init__(regularization_param=regularization_param, learning_rate=learning_rate,
-                         accuracy=accuracy, max_iterations=max_iterations)
+    def __init__(self, regularization_param=0, optimizer=GradientDescent(), predict_probabilities=False):
+        super().__init__(regularization_param=regularization_param, optimizer=optimizer)
         self._predict_probabilities = predict_probabilities
         self._labels = None
 
