@@ -25,7 +25,9 @@ class BaseRegression:
         :param X: Features
         :param y: Target values
         """
-        self._coefs = gradient_descent(self._cost, self._cost_gradient, np.zeros(X.shape[1]), (X, y),
+        self._coefs = gradient_descent(self._cost, self._cost_gradient,
+                                       np.zeros((X.shape[1], y.shape[1]) if y.ndim >= 2 else X.shape[1]),
+                                       (X, y),
                                        self._learning_rate, self._accuracy, self._max_iterations)
 
     def predict(self, X):
@@ -46,5 +48,5 @@ class BaseRegression:
         # Intercept should not be regularized, so it is set to 0 in a copy of the coefficients vector
         coefs_without_intercept = coefs.copy()
         coefs_without_intercept[0] = 0
-        return ((self._hypothesis(X, coefs) - y)@X +
+        return (X.T@(self._hypothesis(X, coefs) - y) +
                 self._regularization_param * coefs_without_intercept) / X.shape[0]
