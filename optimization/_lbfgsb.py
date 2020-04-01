@@ -3,7 +3,12 @@ from scipy.optimize import minimize
 
 
 class LBFGSB(BaseOptimizer):
-    """An optimizer-like wrapper for SciPy L-BFGS-B implementation."""
+    """An optimizer-like wrapper for SciPy L-BFGS-B implementation.
+
+    :param options: Options to pass into scipy.optimize.minimize
+    """
+    def __init__(self, options=None):
+        self._options = options
 
     def minimize(self, func, grad, x0, args=()):
         """Find an optimal arguments array to minimize a function.
@@ -21,5 +26,5 @@ class LBFGSB(BaseOptimizer):
             original_shape = x0.shape
             x0 = x0.flatten()
 
-        result = minimize(func, x0, args=args, method='L-BFGS-B', jac=grad)
+        result = minimize(func, x0, args=args, method='L-BFGS-B', jac=grad, options=self._options)
         return result.x if original_shape is None else result.x.reshape(original_shape)
