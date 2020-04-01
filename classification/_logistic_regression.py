@@ -1,10 +1,11 @@
 import numpy as np
 from ..optimization import GradientDescent
 from ..preprocessing import add_intercept
+from .._base_models import BaseSupervisedModel
 from ..regression._linear_regression import BaseRegression
 
 
-class LogisticRegression:
+class LogisticRegression(BaseSupervisedModel):
     """Logistic regression implementation.
 
     :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is used)
@@ -66,17 +67,6 @@ class LogisticRegression:
             threshold=None, regularization_param=self._regularization_param, optimizer=self._optimizer)
         binary_classifier.fit(X, binary_y)
         return binary_classifier
-
-    @staticmethod
-    def _transform_to_numpy(X, y=None):
-        # Though, for instance, Pandas DataFrame and Series can be used as NumPy arrays, doing this results in severe
-        # decrease of performance, so features and target should be converted to pure NumPy arrays.
-        X = np.asarray(X)
-        if y is None:
-            return X
-        else:
-            y = np.asarray(y)
-            return X, y
 
 
 class _BinaryLogisticRegression(BaseRegression):

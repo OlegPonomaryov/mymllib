@@ -1,8 +1,10 @@
 import numpy as np
 from ..optimization import GradientDescent
+from .._base_models import BaseSupervisedModel
+from abc import abstractmethod
 
 
-class BaseRegression:
+class BaseRegression(BaseSupervisedModel):
     """Base class for regressions.
 
     :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is used)
@@ -33,9 +35,11 @@ class BaseRegression:
         """
         return self._hypothesis(X, self._coefs)
 
+    @abstractmethod
     def _hypothesis(self, X, coefs):
         pass
 
+    @abstractmethod
     def _cost(self, coefs, X, y):
         pass
 

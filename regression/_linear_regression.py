@@ -48,14 +48,3 @@ class LinearRegression(BaseRegression):
         regularization_matrix = self._regularization_param*np.identity(features_count)
         regularization_matrix[0, 0] = 0
         return np.linalg.pinv(X.T @ X + regularization_matrix) @ X.T @ y
-
-    @staticmethod
-    def _transform_to_numpy(X, y=None):
-        # Though, for instance, Pandas DataFrame and Series can be used as NumPy arrays, doing this results in severe
-        # decrease of performance, so features and target should be converted to pure NumPy arrays.
-        X = np.asarray(X)
-        if y is None:
-            return X
-        else:
-            y = np.asarray(y)
-            return X, y
