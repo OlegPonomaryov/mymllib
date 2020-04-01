@@ -15,7 +15,7 @@ class GradientDescent(BaseOptimizer):
         self._accuracy = accuracy
         self._max_iterations = max_iterations
 
-    def minimize(self, func, grad, x0, args):
+    def minimize(self, func, grad, x0, args=()):
         """Find an optimal arguments array to minimize a function.
 
         :param func: A function to minimize

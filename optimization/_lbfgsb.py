@@ -5,7 +5,7 @@ from scipy.optimize import minimize
 class LBFGSB(BaseOptimizer):
     """An optimizer-like wrapper for SciPy L-BFGS-B implementation."""
 
-    def minimize(self, func, grad, x0, args):
+    def minimize(self, func, grad, x0, args=()):
         """Find an optimal arguments array to minimize a function.
 
         :param func: A function to minimize
