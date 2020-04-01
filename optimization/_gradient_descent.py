@@ -6,7 +6,7 @@ class GradientDescent(BaseOptimizer):
     """An optimizer that uses gradient descent algorithm.
 
     :param learning_rate: Initial learning rate of gradient descent (will be automatically reduced if too high)
-    :param accuracy: Accuracy of gradient descent
+    :param accuracy: The algorithm will stop if all elements of a gradient are less than or equal to the accuracy
     :param max_iterations: Maximum iterations count of gradient descent
     """
 
@@ -36,7 +36,7 @@ class GradientDescent(BaseOptimizer):
 
             # If absolute values of all partial derivatives are small enough, than coefficients are close enough to the
             # minimum and there is no need to continue gradient descent
-            if np.sum(np.abs(gradient) > self._accuracy) == 0:
+            if np.abs(gradient).max() <= self._accuracy:
                 break
 
             x = x - learning_rate * gradient
