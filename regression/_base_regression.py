@@ -23,9 +23,7 @@ class BaseRegression(BaseSupervisedModel):
         :param X: Features
         :param y: Target values
         """
-        self._coefs = self._optimizer.minimize(
-            self._cost, self._cost_gradient,
-            np.zeros((X.shape[1], y.shape[1]) if y.ndim >= 2 else X.shape[1]), (X, y))
+        self._coefs = self._fit(X, y)
 
     def predict(self, X):
         """Predict target values.
@@ -34,6 +32,11 @@ class BaseRegression(BaseSupervisedModel):
         :return: Target values
         """
         return self._hypothesis(X, self._coefs)
+
+    def _fit(self, X, y):
+        return self._optimizer.minimize(
+            self._cost, self._cost_gradient,
+            np.zeros((X.shape[1], y.shape[1]) if y.ndim >= 2 else X.shape[1]), (X, y))
 
     @abstractmethod
     def _hypothesis(self, X, coefs):
