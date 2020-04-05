@@ -45,13 +45,13 @@ class LogisticRegression(BaseRegression):
 
         predictions = super().predict(add_intercept(X))
         if self._predict_probabilities:
-            return predictions
+            return predictions.flatten() if len(self._labels) == 2 else predictions
         else:
             if len(self._labels) == 2:
                 predictions = (predictions >= 0.5) * 1
             else:
                 predictions = np.argmax(predictions, axis=1)
-            return self._labels.take(predictions)
+            return self._labels.take(predictions).flatten()
 
     def _hypothesis(self, X, coefs):
         z = X @ coefs
