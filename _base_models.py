@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-import numpy as np
+from .preprocessing import to_numpy
 
 
 class BaseModel(ABC):
@@ -7,11 +7,11 @@ class BaseModel(ABC):
     def _transform_to_numpy(X, y=None):
         # Though, for instance, Pandas DataFrame and Series can be used as NumPy arrays, doing this results in severe
         # decrease of performance, so features and target should be converted to pure NumPy arrays.
-        X = np.asarray(X)
+        X = to_numpy(X)
         if y is None:
             return X
         else:
-            y = np.asarray(y)
+            y = to_numpy(y)
             return X, y
 
 
