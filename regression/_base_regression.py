@@ -7,7 +7,8 @@ from abc import abstractmethod
 class BaseRegression(BaseSupervisedModel):
     """Base class for regressions.
 
-    :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is used)
+    :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is
+        used)
     :param optimizer: An optimizer to use for minimizing a cost function
     """
 

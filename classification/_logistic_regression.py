@@ -7,10 +7,13 @@ from ..regression._linear_regression import BaseRegression
 class LogisticRegression(BaseRegression):
     """Logistic regression implementation.
 
-    :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is used)
+    :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is
+        used)
     :param optimizer: An optimizer to use for minimizing a cost function
-    :param predict_probabilities: Whether to return probabilities of samples to belong to each of the classes (ordered by their labels) instead of chosen classes
-    :param all_at_once: Whether to optimize all binary classification subproblems of a multiclass problem as a single optimization target
+    :param predict_probabilities: Whether to return probabilities of samples to belong to each of the classes (ordered
+        by their labels) instead of chosen classes
+    :param all_at_once: Whether to optimize all binary classification subproblems of a multiclass problem as a single
+        optimization target
     """
 
     def __init__(self, regularization_param=0, optimizer=GradientDescent(), predict_probabilities=False,
