@@ -42,9 +42,13 @@ def add_polynomial(X, polynomial_degree):
                         for degree in range(1, polynomial_degree + 1))
 
     # Initialize resulting matrix and put the first degree polynomial (the original matrix) into it
-    X_result = np.zeros((X.shape[0], sum(poly_lengths)))
+    X_result = np.empty((X.shape[0], sum(poly_lengths)), dtype=X.dtype)
     X_result[:, :X.shape[1]] = X
     tail_index = X.shape[1]  # An index of the first column after the last polynomial inserted into the resulting matrix
+
+    # Indices of positions from which to start multiplying terms of the previous polynomial by each column of the
+    # original matrix to get the next polynomial
+    start_indices = list(range(X.shape[1]))
 
     # Calculate all polynomials starting from 1 and up to the passed polynomial degree and insert them into the
     # resulting matrix
@@ -55,15 +59,18 @@ def add_polynomial(X, polynomial_degree):
         previous_poly = X_result[:, tail_index-previous_poly_length:tail_index]
 
         # Iterate through column indices of the original matrix
+        new_start_index = 0
         for i in range(0, X.shape[1]):
             # Calculate how many terms of the new polynomial should be calculated by multiplying terms of the previous
             # one by the i-th column of the original matrix
-            terms_count = previous_poly_length if i == 0 else\
-                          comb(X.shape[1] - i, previous_poly_degree, repetition=True, exact=True)
+            terms_count = previous_poly_length - start_indices[i]
 
             # Calculate terms of the new polynomial that include the i-th column and append them to the resulting matrix
-            X_result[:, tail_index:tail_index + terms_count] =\
-                X[:, i][np.newaxis].T * previous_poly[:, previous_poly_length - terms_count:previous_poly_length]
+            np.multiply(previous_poly[:, previous_poly_length - terms_count:previous_poly_length], X[:, i, np.newaxis],
+                        out=X_result[:, tail_index:tail_index + terms_count])
+
             tail_index += terms_count
+            start_indices[i] = new_start_index
+            new_start_index += terms_count
 
     return X_result
