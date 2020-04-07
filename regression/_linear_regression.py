@@ -1,4 +1,5 @@
-import numpy as np
+from numpy import identity
+from numpy.linalg import inv, pinv
 from ..preprocessing import add_intercept
 from ._base_regression import BaseRegression
 
@@ -45,7 +46,12 @@ class LinearRegression(BaseRegression):
                 self._regularization_param*(coefs[1:]**2).sum()) / (2 * X.shape[0])
 
     def _normal_equation(self, X, y):
-        features_count = X.T.shape[0]
-        regularization_matrix = self._regularization_param*np.identity(features_count)
-        regularization_matrix[0, 0] = 0
-        return np.linalg.pinv(X.T @ X + regularization_matrix) @ X.T @ y
+        if self._regularization_param > 0:
+            regularization_matrix = self._regularization_param*identity(X.T.shape[0])
+            regularization_matrix[0, 0] = 0
+            # If the regularization parameter is greater than 0, a matrix in the equation is always invertible, so there
+            # is no need to calculate a pseudo-inverse (pinv()) instead of an ordinary inverse (inv())
+            return inv(X.T @ X + regularization_matrix) @ X.T @ y
+        else:
+            # X.T @ X is symmetric and if a matrix with only real entries is symmetric than it is Hermitian
+            return pinv(X.T @ X, hermitian=True) @ X.T @ y
