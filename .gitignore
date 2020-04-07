@@ -1,4 +1,6 @@
 # PyCharm folders
 .idea
-.venv
 __pycache__
+
+# A virtual environment
+.venv
