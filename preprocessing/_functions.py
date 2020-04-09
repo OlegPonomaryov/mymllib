@@ -17,7 +17,7 @@ def add_intercept(X):
     :param X: Features
     :return: Features with intercept feature
     """
-    samples_count = X.shape[0]
+    samples_count = np.shape(X)[0]
     intercept_column = np.ones((samples_count, 1))
     return np.hstack((intercept_column, X))
 

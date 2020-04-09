@@ -1,7 +1,28 @@
 """Tests for the '_functions' module."""
 import numpy as np
-from preprocessing import add_polynomial
+from preprocessing import to_numpy, add_intercept, add_polynomial
 import pytest
+
+
+def test_to_numypy__list_passed__ndarray_returned():
+    a = [1, 2, 3]
+
+    b = to_numpy(a)
+
+    assert isinstance(b, np.ndarray)
+
+
+def test_add_intercept__matrix_passed__matrix_with_intercept_returned():
+    A = [[1, 2, 3],
+         [1, 2, 3],
+         [1, 2, 3]]
+    A_intercept = [[1, 1, 2, 3],
+                   [1, 1, 2, 3],
+                   [1, 1, 2, 3]]
+
+    B = add_intercept(A)
+
+    assert np.array_equal(B, A_intercept)
 
 
 def test_add_polynomial__matrix_and_floating_point_degree_passed__value_error_raised():
