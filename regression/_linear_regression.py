@@ -1,5 +1,5 @@
 from numpy import identity
-from numpy.linalg import inv, pinv
+from numpy.linalg import solve, lstsq
 from ..preprocessing import add_intercept
 from ._base_regression import BaseRegression
 
@@ -49,9 +49,9 @@ class LinearRegression(BaseRegression):
         if self._regularization_param > 0:
             regularization_matrix = self._regularization_param*identity(X.T.shape[0])
             regularization_matrix[0, 0] = 0
-            # If the regularization parameter is greater than 0, a matrix in the equation is always invertible, so there
-            # is no need to calculate a pseudo-inverse (pinv()) instead of an ordinary inverse (inv())
-            return inv(X.T @ X + regularization_matrix) @ X.T @ y
+            # If the regularization parameter is greater than 0, a matrix defined as X.T @ X + regularization_matrix is
+            # always invertible and therefore has full rank, so it is possible to use numpy.linalg.solve() which is
+            # faster than numpy.linalg.lstsq()
+            return solve(X.T @ X + regularization_matrix, X.T @ y)
         else:
-            # X.T @ X is symmetric and if a matrix with only real entries is symmetric than it is Hermitian
-            return pinv(X.T @ X, hermitian=True) @ X.T @ y
+            return lstsq(X, y, rcond=None)[0]
