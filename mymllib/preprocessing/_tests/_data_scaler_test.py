@@ -1,6 +1,6 @@
 """Tests for the '_data_scaler' module."""
 import numpy as np
-from preprocessing import DataScaler
+from mymllib.preprocessing import DataScaler
 
 
 def test_fit_scale__fit_on_one_matrix_and_scale_another__correctly_scaled_matrix_returned():

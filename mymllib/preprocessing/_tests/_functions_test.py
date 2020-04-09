@@ -1,6 +1,6 @@
 """Tests for the '_functions' module."""
 import numpy as np
-from preprocessing import to_numpy, add_intercept, add_polynomial
+from mymllib.preprocessing import to_numpy, add_intercept, add_polynomial
 import pytest
 
 

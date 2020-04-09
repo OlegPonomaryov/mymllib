@@ -1,7 +1,7 @@
 import numpy as np
-from ..optimization import GradientDescent
-from ..preprocessing import add_intercept
-from ..regression._linear_regression import BaseRegression
+from mymllib.optimization import GradientDescent
+from mymllib.preprocessing import add_intercept
+from mymllib.regression._linear_regression import BaseRegression
 
 
 class LogisticRegression(BaseRegression):

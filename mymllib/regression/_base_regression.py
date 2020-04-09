@@ -1,6 +1,6 @@
 import numpy as np
-from ..optimization import GradientDescent
-from .._base_models import BaseSupervisedModel
+from mymllib.optimization import GradientDescent
+from mymllib._base_models import BaseSupervisedModel
 from abc import abstractmethod
 
 

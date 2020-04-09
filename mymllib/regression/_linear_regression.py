@@ -1,5 +1,5 @@
 from numpy.linalg import solve, lstsq
-from ..preprocessing import add_intercept
+from mymllib.preprocessing import add_intercept
 from ._base_regression import BaseRegression
 
 

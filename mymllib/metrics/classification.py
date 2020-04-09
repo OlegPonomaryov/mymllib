@@ -1,5 +1,5 @@
 import numpy as np
-from ..preprocessing import to_numpy
+from mymllib.preprocessing import to_numpy
 
 
 def precision(y_actual, y_predicted, target_label=1):
