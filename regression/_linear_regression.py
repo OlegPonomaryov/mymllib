@@ -1,4 +1,3 @@
-from numpy import identity
 from numpy.linalg import solve, lstsq
 from ..preprocessing import add_intercept
 from ._base_regression import BaseRegression
@@ -47,11 +46,10 @@ class LinearRegression(BaseRegression):
 
     def _normal_equation(self, X, y):
         if self._regularization_param > 0:
-            regularization_matrix = self._regularization_param*identity(X.T.shape[0])
-            regularization_matrix[0, 0] = 0
-            # If the regularization parameter is greater than 0, a matrix defined as X.T @ X + regularization_matrix is
-            # always invertible and therefore has full rank, so it is possible to use numpy.linalg.solve() which is
-            # faster than numpy.linalg.lstsq()
-            return solve(X.T @ X + regularization_matrix, X.T @ y)
+            A = X.T @ X
+            A[1:].flat[1::A.shape[1] + 1] += self._regularization_param
+            # If the regularization parameter is greater than 0, the A matrix is always invertible and therefore has
+            # full rank, so it is possible to use numpy.linalg.solve() which is faster than numpy.linalg.lstsq()
+            return solve(A, X.T @ y)
         else:
             return lstsq(X, y, rcond=None)[0]
