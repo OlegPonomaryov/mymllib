@@ -36,7 +36,7 @@ class LogisticRegression(BaseRegression):
         if self._all_at_once:
             super().fit(X, Y)
         else:
-            self._coefs = np.apply_along_axis(lambda y_bin: self._fit(X, y_bin), 0, Y)
+            self._coefs = np.apply_along_axis(lambda y_bin: self._optimize_coefs(X, y_bin), 0, Y)
 
     def predict(self, X):
         """Predict target values.
