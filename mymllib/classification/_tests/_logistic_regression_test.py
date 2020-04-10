@@ -1,4 +1,5 @@
-"""Tests for the '_logistic_regression' module."""
+"""Tests for the LogisticRegression class."""
+import pytest
 import numpy as np
 from numpy.testing import assert_array_equal, assert_allclose
 from mymllib.classification import LogisticRegression
@@ -22,13 +23,10 @@ X = [[24, 32],
      [20, 30],
      [2, 3],
      [22, 3]]
+
 y = [0, 1, 2,  0, 1, 2,  0, 1, 2]
 
-# Due to significant digits limitation of floating-point variables an output of the logistic function for very large or
-# very small arguments is rounded, so altering such an argument a little bit won't change the result of the function,
-# making numerical gradient calculation impossible. This can be avoided by scaling X and therefore decreasing absolute
-# values of its elements.
-X_scaled = DataScaler().fit(X).scale(X)
+y_text = ["A", "B", "C", "A", "B", "C", "A", "B", "C"]
 
 # A one-hot version of the y
 y_one_hot = [[1, 0, 0],
@@ -51,58 +49,33 @@ y_bin = [0, 0, 1,  0, 0, 1,  0, 0, 1]
 test_set_start = 6
 
 
-def test_fit_predict__fit_and_predict_on_binary_dataset__correct_predictions_returned():
-    logistic_regression = LogisticRegression(all_at_once=False)
-    logistic_regression.fit(X[:test_set_start], y_bin[:test_set_start])
-    predictions = logistic_regression.predict(X)
+@pytest.mark.parametrize("y", [y_bin, y, y_text])
+@pytest.mark.parametrize("all_at_once", [True, False])
+@pytest.mark.parametrize("regularization_param", [0, 1])
+def test_fit_predict(y, all_at_once, regularization_param):
+    logistic_regression = LogisticRegression(all_at_once=all_at_once, regularization_param=regularization_param)
 
-    assert_array_equal(predictions, y_bin)
-
-
-def test_fit_predict__fit_and_predict_with_all_at_once_on_binary_dataset__correct_predictions_returned():
-    logistic_regression = LogisticRegression(all_at_once=True)
-    logistic_regression.fit(X[:test_set_start], y_bin[:test_set_start])
-    predictions = logistic_regression.predict(X)
-
-    assert_array_equal(predictions, y_bin)
-
-
-def test_fit_predict__fit_and_predict_on_multiclass_dataset__correct_predictions_returned():
-    logistic_regression = LogisticRegression(all_at_once=False)
     logistic_regression.fit(X[:test_set_start], y[:test_set_start])
     predictions = logistic_regression.predict(X)
 
     assert_array_equal(predictions, y)
 
 
-def test_fit_predict__fit_and_predict_with_all_at_once_on_multiclass_dataset__correct_predictions_returned():
-    logistic_regression = LogisticRegression(all_at_once=True)
-    logistic_regression.fit(X[:test_set_start], y[:test_set_start])
-    predictions = logistic_regression.predict(X)
+@pytest.mark.parametrize("y, coefs", [
+    (y_bin, np.ones(np.shape(X)[1])),
+    (y_one_hot, np.ones((np.shape(X)[1], np.shape(y_one_hot)[1])))
+])
+@pytest.mark.parametrize("regularization_param", [0, 1])
+def test_cost_gradient(y, coefs, regularization_param):
+    # Due to significant digits limitation of floating-point variables an output of the logistic function for very large
+    # or very small arguments is rounded, so altering such an argument a little bit won't change the result of the
+    # function, making numerical gradient calculation impossible. This can be avoided by scaling X and therefore
+    # decreasing absolute values of its elements.
+    X_scaled = DataScaler().fit(X).scale(X)
 
-    assert_array_equal(predictions, y)
+    y_np = to_numpy(y)
+    logistic_regression = LogisticRegression(regularization_param=regularization_param)
 
-
-# This test imitates calculating cost and its gradient for binary classification problems or multiclass ones when
-# all_at_once is set to False and coefficients for each binary subproblems are being optimized separately
-def test_cost__binary_y_and_1D_coefs_passed__analytical_cost_gradient_equal_to_numerical_one():
-    y_np = to_numpy(y_bin)
-    coefs = np.ones(X_scaled.shape[1])
-
-    logistic_regression = LogisticRegression(regularization_param=1)
-    analytical_gradient = logistic_regression._cost_gradient(coefs, X_scaled, y_np)
-    numerical_gradient = gradient(coefs, logistic_regression._cost, (X_scaled, y_np))
-
-    assert_allclose(analytical_gradient, numerical_gradient)
-
-
-# This test imitates calculating cost and its gradient for multiclass problems when all_at_once is set to True and
-# coefficients for each binary subproblems are optimized all at once as a matrix
-def test_cost__one_hot_y_and_2D_coefs_passed__analytical_cost_gradient_equal_to_numerical_one():
-    y_np = to_numpy(y_one_hot)
-    coefs = np.ones((X_scaled.shape[1], np.shape(y_np)[1]))
-
-    logistic_regression = LogisticRegression(regularization_param=1)
     analytical_gradient = logistic_regression._cost_gradient(coefs, X_scaled, y_np)
     numerical_gradient = gradient(coefs, logistic_regression._cost, (X_scaled, y_np))
 

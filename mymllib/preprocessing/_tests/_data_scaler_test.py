@@ -1,9 +1,9 @@
-"""Tests for the '_data_scaler' module."""
+"""Tests for the DataScaler class."""
 from numpy.testing import assert_array_equal
 from mymllib.preprocessing import DataScaler
 
 
-def test_fit_scale__fit_on_one_matrix_and_scale_another__correctly_scaled_matrix_returned():
+def test_fit_scale():
     A = [[0, -8, 5],
          [4, -2, 7]]
     B = [[5, 7, 4],

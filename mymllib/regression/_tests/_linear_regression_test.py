@@ -1,7 +1,9 @@
-"""Tests for the '_linear_regression' module."""
+"""Tests for the LinearRegression class."""
+import pytest
 import numpy as np
 from numpy.testing import assert_allclose
 from mymllib.regression import LinearRegression
+from mymllib.optimization import LBFGSB
 from mymllib.tools import gradient
 from mymllib.preprocessing import to_numpy
 
@@ -19,19 +21,25 @@ y = [18, 19, 10, 13]
 test_set_start = 3
 
 
-def test_fit_predict__fit_and_predict_on_dataset__correct_predictions_returned():
-    linear_regression = LinearRegression()
+@pytest.mark.parametrize("optimizer", [None, LBFGSB()])
+# Higher regularization parameter will worsen precision because all features are actually 'useful' and don't need to be
+# regularized
+@pytest.mark.parametrize("regularization_param", [0, 0.00001])
+def test_fit_predict(optimizer, regularization_param):
+    linear_regression = LinearRegression(optimizer=optimizer, regularization_param=regularization_param)
+
     linear_regression.fit(X[:test_set_start], y[:test_set_start])
     predictions = linear_regression.predict(X)
 
-    assert_allclose(predictions, y)
+    assert_allclose(predictions, y, rtol=1e-06)
 
 
-def test_cost__analytical_cost_gradient_equal_to_numerical_one():
+@pytest.mark.parametrize("regularization_param", [0, 1])
+def test_cost_gradient(regularization_param):
     X_np = to_numpy(X)
     coefs = np.ones(X_np.shape[1])
 
-    linear_regression = LinearRegression(regularization_param=1)
+    linear_regression = LinearRegression(regularization_param=regularization_param)
     analytical_gradient = linear_regression._cost_gradient(coefs, X_np, y)
     numerical_gradient = gradient(coefs, linear_regression._cost, (X_np, y))
 
