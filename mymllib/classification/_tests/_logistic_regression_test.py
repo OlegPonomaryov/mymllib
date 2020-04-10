@@ -52,7 +52,7 @@ test_set_start = 6
 
 
 def test_fit_predict__fit_and_predict_on_binary_dataset__correct_predictions_returned():
-    logistic_regression = LogisticRegression()
+    logistic_regression = LogisticRegression(all_at_once=False)
     logistic_regression.fit(X[:test_set_start], y_bin[:test_set_start])
     predictions = logistic_regression.predict(X)
 
@@ -60,7 +60,7 @@ def test_fit_predict__fit_and_predict_on_binary_dataset__correct_predictions_ret
 
 
 def test_fit_predict__fit_and_predict_with_all_at_once_on_binary_dataset__correct_predictions_returned():
-    logistic_regression = LogisticRegression()
+    logistic_regression = LogisticRegression(all_at_once=True)
     logistic_regression.fit(X[:test_set_start], y_bin[:test_set_start])
     predictions = logistic_regression.predict(X)
 
@@ -68,14 +68,14 @@ def test_fit_predict__fit_and_predict_with_all_at_once_on_binary_dataset__correc
 
 
 def test_fit_predict__fit_and_predict_on_multiclass_dataset__correct_predictions_returned():
-    logistic_regression = LogisticRegression(all_at_once=True)
+    logistic_regression = LogisticRegression(all_at_once=False)
     logistic_regression.fit(X[:test_set_start], y[:test_set_start])
     predictions = logistic_regression.predict(X)
 
     assert_array_equal(predictions, y)
 
 
-def test_fit_predict__fit_and_predict_with_all_at_on_multiclass_dataset__correct_predictions_returned():
+def test_fit_predict__fit_and_predict_with_all_at_once_on_multiclass_dataset__correct_predictions_returned():
     logistic_regression = LogisticRegression(all_at_once=True)
     logistic_regression.fit(X[:test_set_start], y[:test_set_start])
     predictions = logistic_regression.predict(X)
