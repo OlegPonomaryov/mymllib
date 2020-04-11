@@ -1,18 +1,8 @@
 from abc import ABC, abstractmethod
-from .preprocessing import to_numpy
 
 
 class BaseModel(ABC):
-    @staticmethod
-    def _transform_to_numpy(X, y=None):
-        # Though, for instance, Pandas DataFrame and Series can be used as NumPy arrays, doing this results in severe
-        # decrease of performance, so features and target should be converted to pure NumPy arrays.
-        X = to_numpy(X)
-        if y is None:
-            return X
-        else:
-            y = to_numpy(y)
-            return X, y
+    pass
 
 
 class BaseSupervisedModel(BaseModel):

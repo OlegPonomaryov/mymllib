@@ -1,5 +1,5 @@
 from numpy.linalg import solve, lstsq
-from mymllib.preprocessing import add_intercept
+from mymllib.preprocessing import to_numpy, add_intercept
 from ._base_regression import BaseRegression
 
 
@@ -21,7 +21,7 @@ class LinearRegression(BaseRegression):
         :param X: Features
         :param y: Target values
         """
-        X, y = LinearRegression._transform_to_numpy(X, y)
+        X, y = to_numpy(X, y)
         X = add_intercept(X)
         if self._optimizer is not None:
             super().fit(X, y)
@@ -34,7 +34,7 @@ class LinearRegression(BaseRegression):
         :param X: Features
         :return: Target values
         """
-        X = LinearRegression._transform_to_numpy(X)
+        X = to_numpy(X)
         return super().predict(add_intercept(X))
 
     def _hypothesis(self, X, coefs):

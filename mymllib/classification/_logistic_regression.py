@@ -1,6 +1,6 @@
 import numpy as np
 from mymllib.optimization import GradientDescent
-from mymllib.preprocessing import add_intercept
+from mymllib.preprocessing import to_numpy, add_intercept
 from mymllib.regression._linear_regression import BaseRegression
 
 
@@ -29,7 +29,7 @@ class LogisticRegression(BaseRegression):
         :param X: Features
         :param y: Target values
         """
-        X, y = LogisticRegression._transform_to_numpy(X, y)
+        X, y = to_numpy(X, y)
         X = add_intercept(X)
         self._labels, Y = LogisticRegression._one_hot(y)
 
@@ -44,7 +44,7 @@ class LogisticRegression(BaseRegression):
         :param X: Features
         :return: Target values
         """
-        X = LogisticRegression._transform_to_numpy(X)
+        X = to_numpy(X)
 
         predictions = super().predict(add_intercept(X))
         if self._predict_probabilities:

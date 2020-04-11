@@ -2,13 +2,16 @@ import numpy as np
 from scipy.special import comb
 
 
-def to_numpy(a):
+def to_numpy(*args):
     """Convert input to a NumPy array.
 
-    :param a: An object to convert
-    :return: NumPy array
+    :param args: Objects to convert
+    :return: Single NumPy array or a tuple of arrays (if multiple arguments passed)
     """
-    return np.asarray(a)
+    if len(args) == 1:
+        return np.asarray(args[0])
+    else:
+        return tuple(np.asarray(arg) for arg in args)
 
 
 def add_intercept(X):

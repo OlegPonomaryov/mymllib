@@ -10,10 +10,17 @@ A = [[1, 2, 3],
      [1, 2, 3]]
 
 
-def test_to_numypy():
+def test_to_numpy__one_arg_passed():
     A_numpy = to_numpy(A)
 
     assert isinstance(A_numpy, ndarray)
+
+
+def test_to_numpy__two_args_passed():
+    A_numpy, B_numpy = to_numpy(A, [1, 2, 3])
+
+    assert isinstance(A_numpy, ndarray)
+    assert isinstance(B_numpy, ndarray)
 
 
 def test_add_intercept():

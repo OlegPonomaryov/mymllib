@@ -10,7 +10,7 @@ def _check_input(y_actual, y_predicted):
     :param y_predicted: Predicted values
     :return: NumPy arrays of actual and predicted values.
     """
-    y_actual, y_predicted = to_numpy(y_actual), to_numpy(y_predicted)
+    y_actual, y_predicted = to_numpy(y_actual, y_predicted)
 
     if y_actual.ndim != 1 or y_predicted.ndim != 1:
         raise ValueError("Actual and predicted values should be one-dimensional")
