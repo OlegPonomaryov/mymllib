@@ -16,8 +16,7 @@ X = [[3, 5],
      [-2, 5]]
 y = [18, 19, 10, 13]
 
-# An index from which the test part of the dataset starts
-# (only data before this index can be used for training a model)
+# An index from which the test part of the dataset starts (only data before this index can be used for training a model)
 test_set_start = 3
 
 

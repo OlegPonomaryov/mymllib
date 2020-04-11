@@ -1,5 +1,5 @@
 import numpy as np
-from mymllib.preprocessing import to_numpy
+from ._common import _check_input
 
 
 def precision(y_actual, y_predicted, target_label=1):
@@ -10,7 +10,8 @@ def precision(y_actual, y_predicted, target_label=1):
     :param target_label: A target label for which to calculate the precision
     :return: Precision value
     """
-    y_actual, y_predicted = _to_numpy(y_actual, y_predicted)
+    y_actual, y_predicted = _check_input(y_actual, y_predicted)
+
     return _precision(y_actual, y_predicted, target_label)
 
 
@@ -22,7 +23,8 @@ def recall(y_actual, y_predicted, target_label=1):
     :param target_label: A target label for which to calculate the recall
     :return: Recall value
     """
-    y_actual, y_predicted = _to_numpy(y_actual, y_predicted)
+    y_actual, y_predicted = _check_input(y_actual, y_predicted)
+
     return _recall(y_actual, y_predicted, target_label)
 
 
@@ -36,7 +38,7 @@ def f1_score(y_actual, y_predicted, target_label=1, use_target_for_multiclass=Fa
         problems (otherwise the target label will be ignored and weighted average score for all labels will be returned)
     :return: F1 score value
     """
-    y_actual, y_predicted = _to_numpy(y_actual, y_predicted)
+    y_actual, y_predicted = _check_input(y_actual, y_predicted)
 
     labels = np.unique(y_actual)
     calculate_weighted = len(labels) > 2 and not use_target_for_multiclass
@@ -82,7 +84,3 @@ def _recall(y_actual, y_predicted, target_label):
 
     true_positive = y_predicted[actual_positive] == target_label
     return np.count_nonzero(true_positive) / actual_positive_count
-
-
-def _to_numpy(y_actual, y_predicted):
-    return to_numpy(y_actual), to_numpy(y_predicted)

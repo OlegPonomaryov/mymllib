@@ -44,8 +44,7 @@ y_one_hot = [[1, 0, 0],
 # A binary version of the y with respect to the class 2
 y_bin = [0, 0, 1,  0, 0, 1,  0, 0, 1]
 
-# An index from which the test part of the dataset starts
-# (only data before this index can be used for training a model)
+# An index from which the test part of the dataset starts (only data before this index can be used for training a model)
 test_set_start = 6
 
 
@@ -80,3 +79,12 @@ def test_cost_gradient(y, coefs, regularization_param):
     numerical_gradient = gradient(coefs, logistic_regression._cost, (X_scaled, y_np))
 
     assert_allclose(analytical_gradient, numerical_gradient)
+
+
+def test_one_hot():
+    logistic_regression = LogisticRegression()
+
+    labels, one_hot = logistic_regression._one_hot(to_numpy(y_text))
+
+    assert_array_equal(labels, ["A", "B", "C"])
+    assert_array_equal(one_hot, y_one_hot)
