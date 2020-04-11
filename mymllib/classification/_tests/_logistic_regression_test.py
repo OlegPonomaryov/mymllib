@@ -48,6 +48,28 @@ y_bin = [0, 0, 1,  0, 0, 1,  0, 0, 1]
 test_set_start = 6
 
 
+@pytest.mark.parametrize("X, y", [
+    (np.ones(20), np.ones(20)),
+    (np.ones((20, 5, 3)), np.ones(20)),
+    (np.ones((20, 5)), np.ones((20, 5))),
+    (np.ones((20, 5)), np.ones(30))])
+def test_fit__invalid_input_shapes(X, y):
+    logistic_regression = LogisticRegression(optimizer=None)
+
+    with pytest.raises(ValueError):
+        logistic_regression.fit(X, y)
+
+
+@pytest.mark.parametrize("X_test", [
+    np.ones(10), np.ones((10, 2, 1)), np.ones((10, 1))])
+def test_predict__invalid_input_shapes(X_test):
+    logistic_regression = LogisticRegression()
+    logistic_regression.fit(X[:test_set_start], y[:test_set_start])
+
+    with pytest.raises(BaseException):
+        logistic_regression.predict(X_test)
+
+
 @pytest.mark.parametrize("y", [y_bin, y, y_text])
 @pytest.mark.parametrize("all_at_once", [True, False])
 @pytest.mark.parametrize("regularization_param", [0, 1])

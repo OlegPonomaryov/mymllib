@@ -18,10 +18,10 @@ class LinearRegression(BaseRegression):
     def fit(self, X, y):
         """Train the model.
 
-        :param X: Features
+        :param X: Features values
         :param y: Target values
         """
-        X, y = to_numpy(X, y)
+        X, y = LinearRegression._check_data(X, y)
         X = add_intercept(X)
         if self._optimizer is not None:
             super().fit(X, y)
@@ -31,7 +31,7 @@ class LinearRegression(BaseRegression):
     def predict(self, X):
         """Predict target values.
 
-        :param X: Features
+        :param X: Features values
         :return: Target values
         """
         X = to_numpy(X)

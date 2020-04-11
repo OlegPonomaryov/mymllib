@@ -21,7 +21,7 @@ class BaseRegression(BaseSupervisedModel):
     def fit(self, X, y):
         """Train the model.
 
-        :param X: Features
+        :param X: Features values
         :param y: Target values
         """
         self._coefs = self._optimize_coefs(X, y)
@@ -29,9 +29,15 @@ class BaseRegression(BaseSupervisedModel):
     def predict(self, X):
         """Predict target values.
 
-        :param X: Features
+        :param X: Features values
         :return: Target values
         """
+        if X.ndim != 2:
+            raise ValueError("Features values (X) should be a two-dimensional array")
+
+        if X.shape[1] != self._coefs.shape[0]:
+            raise ValueError(f"Expected {self._coefs.shape[0]} features, but {X.shape[1]} received")
+
         return self._hypothesis(X, self._coefs)
 
     def _optimize_coefs(self, X, y):

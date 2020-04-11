@@ -26,10 +26,10 @@ class LogisticRegression(BaseRegression):
     def fit(self, X, y):
         """Train the model.
 
-        :param X: Features
+        :param X: Features values
         :param y: Target values
         """
-        X, y = to_numpy(X, y)
+        X, y = LogisticRegression._check_data(X, y)
         X = add_intercept(X)
         self._labels, Y = LogisticRegression._one_hot(y)
 
@@ -41,7 +41,7 @@ class LogisticRegression(BaseRegression):
     def predict(self, X):
         """Predict target values.
 
-        :param X: Features
+        :param X: Features values
         :return: Target values
         """
         X = to_numpy(X)

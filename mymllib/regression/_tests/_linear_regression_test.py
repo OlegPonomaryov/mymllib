@@ -20,6 +20,28 @@ y = [18, 19, 10, 13]
 test_set_start = 3
 
 
+@pytest.mark.parametrize("X, y", [
+    (np.ones(20), np.ones(20)),
+    (np.ones((20, 5, 3)), np.ones(20)),
+    (np.ones((20, 5)), np.ones((20, 5))),
+    (np.ones((20, 5)), np.ones(30))])
+def test_fit__invalid_input_shapes(X, y):
+    linear_regression = LinearRegression()
+
+    with pytest.raises(ValueError):
+        linear_regression.fit(X, y)
+
+
+@pytest.mark.parametrize("X_test", [
+    np.ones(10), np.ones((10, 2, 1)), np.ones((10, 1))])
+def test_predict__invalid_input_shapes(X_test):
+    linear_regression = LinearRegression()
+    linear_regression.fit(X[:test_set_start], y[:test_set_start])
+
+    with pytest.raises(ValueError):
+        linear_regression.predict(X_test)
+
+
 @pytest.mark.parametrize("optimizer", [None, LBFGSB()])
 # Higher regularization parameter will worsen precision because all features are actually 'useful' and don't need to be
 # regularized
