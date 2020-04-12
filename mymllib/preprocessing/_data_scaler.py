@@ -17,6 +17,8 @@ class DataScaler:
         X = to_numpy(X)
         self._mean = X.mean(axis=0)
         self._standard_deviation = X.std(axis=0)
+        # Replace 0 standard deviations with 1 to avoid division by 0
+        self._standard_deviation[self._standard_deviation == 0] = 1
         return self
 
     def scale(self, X):
