@@ -2,7 +2,7 @@
 import pytest
 import numpy as np
 from numpy.testing import assert_array_equal, assert_allclose
-from mymllib.classification import LogisticRegression
+from mymllib.regression import LogisticRegression
 from mymllib.preprocessing import DataScaler, to_numpy
 from mymllib.tools import gradient
 
