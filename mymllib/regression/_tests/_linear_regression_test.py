@@ -4,7 +4,7 @@ import numpy as np
 from numpy.testing import assert_allclose
 from mymllib.regression import LinearRegression
 from mymllib.optimization import LBFGSB
-from mymllib.tools import gradient
+from mymllib.math.tools import gradient
 from mymllib.preprocessing import to_numpy
 
 

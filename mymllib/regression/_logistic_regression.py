@@ -2,6 +2,7 @@ import numpy as np
 from mymllib.optimization import GradientDescent
 from mymllib.preprocessing import to_numpy, add_intercept
 from mymllib.regression._linear_regression import BaseRegression
+from mymllib.math.functions import sigmoid
 
 
 class LogisticRegression(BaseRegression):
@@ -57,21 +58,7 @@ class LogisticRegression(BaseRegression):
             return self._labels.take(predictions).flatten()
 
     def _hypothesis(self, X, coefs):
-        z = X @ coefs
-
-        # A value of exp(n) exceeds a capacity of double-precision floating-point variables if n is higher than
-        # approximately 709.7. For np.exp() this results in warning message and inf return value, which also makes the
-        # hypothesis to return 0 resulting in an attempt to calculate log(0) in the cost function. To avoid this, all
-        # values from z that are lower than -709.7 (because z is used with '-' in np.exp()) are replaced with -709.7.
-        z = np.maximum(z, -709.7)
-
-        h = 1 / (1 + np.exp(-z))
-
-        # Values that are very close to 1 (like 0.9999999999999999999999) cannot be stored in double-precision floating-
-        # point variables due to their significant digits limitation and are rounded to 1. But returning exactly 1 will
-        # result in an attempt to calculate log(0) in the cost function, so all 1s are replaced with the largest
-        # representable floating point value that is less than 1.
-        return np.minimum(h, 0.9999999999999999)
+        return sigmoid(X, coefs)
 
     def _cost(self, coefs, X, y):
         coefs = LogisticRegression._reshape_coefs(coefs, X, y)
