@@ -1,5 +1,5 @@
 import numpy as np
-from mymllib.optimization import GradientDescent
+from mymllib.optimization import LBFGSB
 from mymllib.preprocessing import to_numpy, add_intercept
 from mymllib.regression._linear_regression import BaseRegression
 from mymllib.math.functions import sigmoid
@@ -17,7 +17,7 @@ class LogisticRegression(BaseRegression):
         optimization target
     """
 
-    def __init__(self, regularization_param=0, optimizer=GradientDescent(), predict_probabilities=False,
+    def __init__(self, regularization_param=0, optimizer=LBFGSB(), predict_probabilities=False,
                  all_at_once=False):
         super().__init__(regularization_param=regularization_param, optimizer=optimizer)
         self._predict_probabilities = predict_probabilities

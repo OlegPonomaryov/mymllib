@@ -1,5 +1,5 @@
 import numpy as np
-from mymllib.optimization import GradientDescent
+from mymllib.optimization import LBFGSB
 from mymllib._base_models import BaseSupervisedModel
 from abc import abstractmethod
 
@@ -12,7 +12,7 @@ class BaseRegression(BaseSupervisedModel):
     :param optimizer: An optimizer to use for minimizing a cost function
     """
 
-    def __init__(self, regularization_param, optimizer=GradientDescent()):
+    def __init__(self, regularization_param, optimizer=LBFGSB()):
         assert regularization_param >= 0, "Regularization parameter must be >= 0, but was negative."
         self._regularization_param = regularization_param
         self._coefs = None
