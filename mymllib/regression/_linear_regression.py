@@ -26,7 +26,7 @@ class LinearRegression(BaseRegression):
         if self._optimizer is not None:
             super().fit(X, y)
         else:
-            self._coefs = self._normal_equation(X, y)
+            self._params = self._normal_equation(X, y)
 
     def predict(self, X):
         """Predict target values.
@@ -37,12 +37,12 @@ class LinearRegression(BaseRegression):
         X = to_numpy(X)
         return super().predict(add_intercept(X))
 
-    def _hypothesis(self, X, coefs):
-        return X @ coefs
+    def _hypothesis(self, X, params):
+        return X @ params
 
-    def _cost(self, coefs, X, y):
-        return (((self._hypothesis(X, coefs) - y)**2).sum() +
-                self._regularization_param*(coefs[1:]**2).sum()) / (2 * X.shape[0])
+    def _cost(self, params, X, y):
+        return (((self._hypothesis(X, params) - y)**2).sum() +
+                self._regularization_param*(params[1:]**2).sum()) / (2 * X.shape[0])
 
     def _normal_equation(self, X, y):
         if self._regularization_param > 0:

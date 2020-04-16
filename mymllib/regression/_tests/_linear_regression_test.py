@@ -58,10 +58,10 @@ def test_fit_predict(optimizer, regularization_param):
 @pytest.mark.parametrize("regularization_param", [0, 1])
 def test_cost_gradient(regularization_param):
     X_np = to_numpy(X)
-    coefs = np.ones(X_np.shape[1])
+    params = np.ones(X_np.shape[1])
 
     linear_regression = LinearRegression(regularization_param=regularization_param)
-    analytical_gradient = linear_regression._cost_gradient(coefs, X_np, y)
-    numerical_gradient = gradient(coefs, linear_regression._cost, (X_np, y))
+    analytical_gradient = linear_regression._cost_gradient(params, X_np, y)
+    numerical_gradient = gradient(params, linear_regression._cost, (X_np, y))
 
     assert_allclose(analytical_gradient, numerical_gradient)

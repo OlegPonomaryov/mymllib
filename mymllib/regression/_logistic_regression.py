@@ -35,11 +35,11 @@ class LogisticRegression(BaseRegression):
         self._labels, Y = LogisticRegression._one_hot(y)
 
         if self._all_at_once:
-            initial_coefs = np.zeros((X.shape[1], Y.shape[1]))
-            coefs = self._optimize_coefs(X, Y, unroll((initial_coefs,)))
-            self._coefs = undo_unroll(coefs, (initial_coefs.shape,))[0]
+            initial_params = np.zeros((X.shape[1], Y.shape[1]))
+            params = self._optimize_params(X, Y, unroll((initial_params,)))
+            self._params = undo_unroll(params, (initial_params.shape,))[0]
         else:
-            self._coefs = np.apply_along_axis(lambda y_bin: self._optimize_coefs(X, y_bin, np.zeros(X.shape[1])), 0, Y)
+            self._params = np.apply_along_axis(lambda y_bin: self._optimize_params(X, y_bin, np.zeros(X.shape[1])), 0, Y)
 
     def predict(self, X):
         """Predict target values.
@@ -59,32 +59,32 @@ class LogisticRegression(BaseRegression):
                 predictions = np.argmax(predictions, axis=1)
             return self._labels.take(predictions).flatten()
 
-    def _hypothesis(self, X, coefs):
-        return sigmoid(X, coefs)
+    def _hypothesis(self, X, params):
+        return sigmoid(X, params)
 
-    def _cost(self, coefs, X, y):
-        _, coefs = LogisticRegression._undo_coefs_unroll(coefs, X, y)
+    def _cost(self, params, X, y):
+        _, params = LogisticRegression._undo_params_unroll(params, X, y)
 
-        log_loss = y*np.log(self._hypothesis(X, coefs)) + (1 - y)*np.log(1 - self._hypothesis(X, coefs))
+        log_loss = y*np.log(self._hypothesis(X, params)) + (1 - y)*np.log(1 - self._hypothesis(X, params))
         # np.mean() is not used for log_loss because for multiclass problems it will divide the sum not only by number
         # of samples, but also by number of classes and in this case the cost function won't match its gradient defined
         # in the BaseRegression class.
         log_loss = -np.sum(log_loss) / X.shape[0]
 
-        regularization = self._regularization_param / (2 * X.shape[0]) * (coefs[1:]**2).sum()
+        regularization = self._regularization_param / (2 * X.shape[0]) * (params[1:]**2).sum()
         return log_loss + regularization
 
-    def _cost_gradient(self, coefs, X, y):
-        coefs_were_unrolled, coefs = LogisticRegression._undo_coefs_unroll(coefs, X, y)
-        gradient = super()._cost_gradient(coefs, X, y)
-        # Return unrolled gradient if coefficients were unrolled too
-        return unroll((gradient,)) if coefs_were_unrolled else gradient
+    def _cost_gradient(self, params, X, y):
+        params_were_unrolled, params = LogisticRegression._undo_params_unroll(params, X, y)
+        gradient = super()._cost_gradient(params, X, y)
+        # Return unrolled gradient if parameters were unrolled too
+        return unroll((gradient,)) if params_were_unrolled else gradient
 
     @staticmethod
-    def _undo_coefs_unroll(coefs, X, y):
-        coefs_were_unrolled = y.ndim == 2 and coefs.ndim == 1
-        coefs = undo_unroll(coefs, ((X.shape[1], y.shape[1]),))[0] if coefs_were_unrolled else coefs
-        return coefs_were_unrolled, coefs
+    def _undo_params_unroll(params, X, y):
+        params_were_unrolled = y.ndim == 2 and params.ndim == 1
+        params = undo_unroll(params, ((X.shape[1], y.shape[1]),))[0] if params_were_unrolled else params
+        return params_were_unrolled, params
 
     @staticmethod
     def _one_hot(y):
