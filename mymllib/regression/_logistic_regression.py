@@ -1,5 +1,5 @@
 import numpy as np
-from mymllib.optimization import LBFGSB
+from mymllib.optimization import LBFGSB, unroll, undo_unroll
 from mymllib.preprocessing import to_numpy, add_intercept
 from mymllib.regression._linear_regression import BaseRegression
 from mymllib.math.functions import sigmoid
@@ -35,9 +35,11 @@ class LogisticRegression(BaseRegression):
         self._labels, Y = LogisticRegression._one_hot(y)
 
         if self._all_at_once:
-            super().fit(X, Y)
+            initial_coefs = np.zeros((X.shape[1], Y.shape[1]))
+            coefs = self._optimize_coefs(X, Y, unroll((initial_coefs,)))
+            self._coefs = undo_unroll(coefs, (initial_coefs.shape,))[0]
         else:
-            self._coefs = np.apply_along_axis(lambda y_bin: self._optimize_coefs(X, y_bin), 0, Y)
+            self._coefs = np.apply_along_axis(lambda y_bin: self._optimize_coefs(X, y_bin, np.zeros(X.shape[1])), 0, Y)
 
     def predict(self, X):
         """Predict target values.
@@ -61,7 +63,7 @@ class LogisticRegression(BaseRegression):
         return sigmoid(X, coefs)
 
     def _cost(self, coefs, X, y):
-        coefs = LogisticRegression._reshape_coefs(coefs, X, y)
+        _, coefs = LogisticRegression._undo_coefs_unroll(coefs, X, y)
 
         log_loss = y*np.log(self._hypothesis(X, coefs)) + (1 - y)*np.log(1 - self._hypothesis(X, coefs))
         # np.mean() is not used for log_loss because for multiclass problems it will divide the sum not only by number
@@ -73,21 +75,16 @@ class LogisticRegression(BaseRegression):
         return log_loss + regularization
 
     def _cost_gradient(self, coefs, X, y):
-        original_coefs_ndim = coefs.ndim
-        coefs = LogisticRegression._reshape_coefs(coefs, X, y)
-
+        coefs_were_unrolled, coefs = LogisticRegression._undo_coefs_unroll(coefs, X, y)
         gradient = super()._cost_gradient(coefs, X, y)
-
-        # Return gradient flattened if coefficients were flattened
-        return gradient.flatten() if original_coefs_ndim < coefs.ndim else gradient
+        # Return unrolled gradient if coefficients were unrolled too
+        return unroll((gradient,)) if coefs_were_unrolled else gradient
 
     @staticmethod
-    def _reshape_coefs(coefs, X, y):
-        # For multiclass problems this implementation of linear regression uses a matrix of coefficients. However, some
-        # optimization algorithms (like scipy.optimize.minimize used by optimization.LBFGSB) are designed to work only
-        # with 1-dimensional arrays. So this function checks dimensionality of coefficients, X and y, determines whether
-        # coefficients were flattened by an optimization algorithm and reshapes them back to the original matrix.
-        return coefs if coefs.ndim > 1 or y.ndim == 1 else coefs.reshape((X.shape[1], y.shape[1]))
+    def _undo_coefs_unroll(coefs, X, y):
+        coefs_were_unrolled = y.ndim == 2 and coefs.ndim == 1
+        coefs = undo_unroll(coefs, ((X.shape[1], y.shape[1]),))[0] if coefs_were_unrolled else coefs
+        return coefs_were_unrolled, coefs
 
     @staticmethod
     def _one_hot(y):
