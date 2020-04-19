@@ -2,9 +2,8 @@
 import numpy as np
 
 
-def sigmoid(X, theta):
+def sigmoid(z):
     """Return sigmoid function value for product of X and theta."""
-    z = X @ theta
 
     # A value of exp(n) exceeds a capacity of double-precision floating-point variables if n is higher than
     # approximately 709.7. For np.exp() this results in warning message and inf return value, which also makes the

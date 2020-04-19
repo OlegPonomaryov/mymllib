@@ -60,7 +60,8 @@ class LogisticRegression(BaseRegression):
             return self._labels.take(predictions).flatten()
 
     def _hypothesis(self, X, params):
-        return sigmoid(X, params)
+        z = X @ params
+        return sigmoid(z)
 
     def _cost(self, params, X, y):
         _, params = LogisticRegression._undo_params_unroll(params, X, y)
