@@ -8,13 +8,14 @@ class BaseActivationFunction(ABC):
 
     @staticmethod
     @abstractmethod
-    def activations(previous_activations, weights):
-        """Calculate activations of the next layer.
+    def activations(x):
+        """Calculate activation function value."""
+        pass
 
-        :param previous_activations: Activations of the previous layer
-        :param weights: Matrix of weights
-        :return: Activations of the next layer
-        """
+    @staticmethod
+    @abstractmethod
+    def derivative(x):
+        """Calculate activation function derivative."""
         pass
 
 
@@ -22,13 +23,12 @@ class SigmoidActivationFunction(BaseActivationFunction):
     """Base class for activation functions."""
 
     @staticmethod
-    def activations(previous_activations, weights):
-        """Calculate activations of the next layer.
+    def activations(x):
+        """Calculate activation function value."""
+        return sigmoid(x)
 
-        :param previous_activations: Activations of the previous layer
-        :param weights: Matrix of weights
-        :return: Activations of the next layer
-        """
-        z = previous_activations @ weights.T
-        return sigmoid(z)
-
+    @staticmethod
+    def derivative(x):
+        """Calculate activation function derivative."""
+        a = SigmoidActivationFunction.activations(x)
+        return a * (1 - a)
