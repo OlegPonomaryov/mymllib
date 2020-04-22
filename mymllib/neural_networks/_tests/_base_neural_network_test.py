@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 from numpy.testing import assert_array_equal, assert_allclose
 from mymllib.neural_networks import BaseNeuralNetwork
-from mymllib.neural_networks.activation_functions import SigmoidActivationFunction
+from mymllib.neural_networks.activations import Sigmoid
 from mymllib.math.tools import gradient
 from mymllib.optimization import unroll
 from mymllib.preprocessing import add_intercept
@@ -28,7 +28,7 @@ X = [[0, 0],
      [0, 1],
      [1, 0],
      [1, 1]]
-activation_function = SigmoidActivationFunction
+activation_function = Sigmoid
 
 # A simple neural network with a single output that calculates XNOR expression for two binary inputs
 weights_so = (np.asarray([[-30, 20, 20],

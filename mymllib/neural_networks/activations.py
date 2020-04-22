@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from mymllib.math.functions import sigmoid
 
 
-class BaseActivationFunction(ABC):
+class BaseActivation(ABC):
     """Base class for activation functions."""
 
     @staticmethod
@@ -19,7 +19,7 @@ class BaseActivationFunction(ABC):
         pass
 
 
-class SigmoidActivationFunction(BaseActivationFunction):
+class Sigmoid(BaseActivation):
     """Base class for activation functions."""
 
     @staticmethod
@@ -30,5 +30,5 @@ class SigmoidActivationFunction(BaseActivationFunction):
     @staticmethod
     def derivative(x):
         """Calculate activation function derivative."""
-        a = SigmoidActivationFunction.activations(x)
+        a = Sigmoid.activations(x)
         return a * (1 - a)

@@ -2,14 +2,22 @@ import numpy as np
 from mymllib import BaseSupervisedModel
 from mymllib.preprocessing import add_intercept
 from mymllib.optimization import unroll, undo_unroll
-from mymllib.neural_networks.activation_functions import SigmoidActivationFunction
+from mymllib.neural_networks.activations import Sigmoid
+from mymllib.optimization import LBFGSB
 
 
 class BaseNeuralNetwork(BaseSupervisedModel):
-    """Base class for feedforward fully connected neural networks."""
+    """Base class for feedforward fully connected neural networks.
 
-    def __init__(self, hidden_layers=(), regularization_param=0, activation=SigmoidActivationFunction):
-        super().__init__(regularization_param=regularization_param)
+    :param hidden_layers: Sizes of hidden layers of the neural network
+    :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is
+        used)
+    :param optimizer: An optimizer to use for minimizing a cost function
+    :param activation: Activation function for the neural network
+    """
+
+    def __init__(self, hidden_layers=(), regularization_param=0, optimizer=LBFGSB(), activation=Sigmoid):
+        super().__init__(regularization_param=regularization_param, optimizer=optimizer)
         self._hidden_layers = hidden_layers
         self._activation = activation
 
