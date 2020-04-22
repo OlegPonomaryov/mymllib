@@ -49,10 +49,13 @@ class BaseNeuralNetwork(BaseSupervisedModel):
 
     @staticmethod
     def _forward_propagate(X, weights, activation_func):
-        activations = [X]
+        activations = []
+        previous_activations = X
         for layer_weights in weights:
-            previous_activations = add_intercept(activations[-1])
-            activations.append(activation_func.activations(previous_activations @ layer_weights.T))
+            previous_activations = add_intercept(previous_activations)
+            activations.append(previous_activations)
+            previous_activations = activation_func.activations(previous_activations @ layer_weights.T)
+        activations.append(previous_activations)  # Add last layer's activations (network's output) without a bias
         return activations
 
     @staticmethod
@@ -60,9 +63,9 @@ class BaseNeuralNetwork(BaseSupervisedModel):
         D = []
         d = activations[-1] - y
         for i in range(len(activations) - 2, -1, -1):
-            D.insert(0, d.T @ add_intercept(activations[i]))
+            D.insert(0, d.T @ activations[i])
             if i > 0:
-                z = add_intercept(activations[i - 1]) @ weights[i - 1].T
+                z = activations[i - 1] @ weights[i - 1].T
                 d = d @ weights[i][:, 1:] * activation_func.derivative(z)
         for i in range(len(D)):
             regularized_weights = regularization_param*weights[i]

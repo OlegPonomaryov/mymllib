@@ -6,6 +6,7 @@ from mymllib.neural_networks import BaseNeuralNetwork
 from mymllib.neural_networks.activation_functions import SigmoidActivationFunction
 from mymllib.math.tools import gradient
 from mymllib.optimization import unroll
+from mymllib.preprocessing import add_intercept
 
 
 @pytest.mark.parametrize("X, y, hidden_layers, expected_shapes", [
@@ -33,11 +34,12 @@ activation_function = SigmoidActivationFunction
 weights_so = (np.asarray([[-30, 20, 20],
                        [10, -20, -20]]),
            np.asarray([[-10, 20, 20]]))
-expected_activations_so = (X,
+expected_activations_so = (add_intercept(X),
+                           add_intercept(
                            [[0, 1],
                             [0, 0],
                             [0, 0],
-                            [1, 0]],
+                            [1, 0]]),
                            [[1],
                             [0],
                             [0],
@@ -47,7 +49,7 @@ expected_activations_so = (X,
 weights_mo = (weights_so[0],
               np.asarray([[-10, 20, 20],
                           [10, -20, -20]]))
-expected_activations_mo = (X,
+expected_activations_mo = (expected_activations_so[0],
                            expected_activations_so[1],
                            [[1, 0],
                             [0, 1],
