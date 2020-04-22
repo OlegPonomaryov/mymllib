@@ -101,12 +101,3 @@ def test_cost_gradient(y, params, regularization_param):
     numerical_gradient = gradient(params, logistic_regression._cost, (X_scaled, y_np))
 
     assert_allclose(analytical_gradient, numerical_gradient)
-
-
-def test_one_hot():
-    logistic_regression = LogisticRegression()
-
-    labels, one_hot = logistic_regression._one_hot(to_numpy(y_text))
-
-    assert_array_equal(labels, ["A", "B", "C"])
-    assert_array_equal(one_hot, y_one_hot)

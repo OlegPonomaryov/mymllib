@@ -1,6 +1,6 @@
 import numpy as np
 from mymllib.optimization import LBFGSB, unroll, undo_unroll
-from mymllib.preprocessing import to_numpy, add_intercept
+from mymllib.preprocessing import to_numpy, add_intercept, one_hot
 from mymllib.regression._linear_regression import BaseRegression
 from mymllib.math.functions import sigmoid
 
@@ -32,7 +32,7 @@ class LogisticRegression(BaseRegression):
         """
         X, y = LogisticRegression._check_data(X, y)
         X = add_intercept(X)
-        self._labels, Y = LogisticRegression._one_hot(y)
+        self._labels, Y = one_hot(y)
 
         if self._all_at_once:
             initial_params = np.zeros((X.shape[1], Y.shape[1]))
@@ -86,13 +86,3 @@ class LogisticRegression(BaseRegression):
         params_were_unrolled = y.ndim == 2 and params.ndim == 1
         params = undo_unroll(params, ((X.shape[1], y.shape[1]),))[0] if params_were_unrolled else params
         return params_were_unrolled, params
-
-    @staticmethod
-    def _one_hot(y):
-        all_labels = np.unique(y)
-
-        if len(all_labels) < 2:
-            raise ValueError("There should be at least 2 different classes")
-
-        labels = all_labels[1:] if len(all_labels) == 2 else all_labels
-        return all_labels, np.vstack(tuple((y == label)*1 for label in labels)).T

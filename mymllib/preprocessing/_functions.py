@@ -77,3 +77,18 @@ def add_polynomial(X, polynomial_degree):
             new_start_index += terms_count
 
     return X_result
+
+
+def one_hot(y):
+    """One-hot encoding of labels sequence.
+
+    :param y: Sequence of labels
+    :return: Unique labels from the sequence, two-dimensional array of one-hot encoded labels
+    """
+    all_labels = np.unique(y)
+
+    if len(all_labels) < 2:
+        raise ValueError("There should be at least 2 different classes")
+
+    labels = all_labels[1:] if len(all_labels) == 2 else all_labels
+    return all_labels, np.vstack(tuple((y == label)*1 for label in labels)).T
