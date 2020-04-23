@@ -27,7 +27,8 @@ class BaseNeuralNetwork(BaseSupervisedModel):
     def _cost(self, params, X, y):
         weights = self._undo_weights_unroll(params, X, y)
 
-        log_loss = y*np.log(self._hypothesis(X, weights)) + (1 - y)*np.log(1 - self._hypothesis(X, weights))
+        model_output = self._hypothesis(X, weights)
+        log_loss = y*np.log(model_output) + (1 - y)*np.log(1 - model_output)
         log_loss = -np.sum(log_loss) / X.shape[0]
 
         regularization = self._regularization_param / (2 * X.shape[0]) *\

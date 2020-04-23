@@ -6,7 +6,7 @@ from mymllib.neural_networks import BaseNeuralNetwork
 from mymllib.neural_networks.activations import Sigmoid
 from mymllib.math.tools import gradient
 from mymllib.optimization import unroll
-from mymllib.preprocessing import add_intercept
+from mymllib.preprocessing import add_intercept, one_hot
 
 
 @pytest.mark.parametrize("X, y, hidden_layers, expected_shapes", [
@@ -72,7 +72,7 @@ def test_forward_propagate(X, weights, expected_activations):
     (np.asarray(X), np.asarray(expected_activations_so[-1]), (np.ones((2, 3)), np.ones((1, 3)))),
     (np.asarray(X), np.asarray(expected_activations_so[-1]), (np.random.rand(2, 3)*2-1, np.random.rand(1, 3)*2-1)),
     (np.asarray(X), np.asarray(expected_activations_mo[-1]), (np.ones((2, 3)), np.ones((2, 3)))),
-    (np.asarray(X), np.asarray(expected_activations_mo[-1]), (np.random.rand(2, 3)*2-1, np.random.rand(2, 3)*2-1)),
+    (np.asarray(X), np.asarray(expected_activations_mo[-1]), (np.random.rand(2, 3)*2-1, np.random.rand(2, 3)*2-1))
 ])
 def test_cost_gradient(X, y, weights):
     unrolled_weights = unroll(weights)
@@ -80,5 +80,22 @@ def test_cost_gradient(X, y, weights):
 
     analytical_gradient = neural_network._cost_gradient(unrolled_weights, X, y)
     numerical_gradient = gradient(unrolled_weights, neural_network._cost, (X, y))
+
+    assert_allclose(analytical_gradient, numerical_gradient)
+
+
+@pytest.mark.parametrize("samples_count, features_count", [(3, 2)])
+@pytest.mark.parametrize("classes_count", [2, 3])
+@pytest.mark.parametrize("hidden_layers", [(2,), (2, 2)])
+def test_cost_gradient__random_input(samples_count, features_count, classes_count, hidden_layers):
+    random_state = np.random.RandomState(seed=7)
+    X = np.asarray(random_state.rand(samples_count, features_count))
+    y = one_hot(1 + np.mod(np.arange(samples_count) + 1, classes_count))[1]
+    neural_network = BaseNeuralNetwork(hidden_layers=hidden_layers)
+    initial_weights = neural_network._init_weights(X, y, hidden_layers)
+    weights = neural_network._optimize_params(X, y, unroll(initial_weights))
+
+    analytical_gradient = neural_network._cost_gradient(weights, X, y)
+    numerical_gradient = gradient(weights, neural_network._cost, (X, y))
 
     assert_allclose(analytical_gradient, numerical_gradient)
