@@ -48,7 +48,7 @@ class BaseNeuralNetwork(BaseSupervisedModel):
     @staticmethod
     def _init_weights(X, y, hidden_layers):
         shapes = BaseNeuralNetwork._get_weights_shapes(X, y, hidden_layers)
-        init_epsilon = 1
+        init_epsilon = 0.01
         return tuple(np.random.rand(shape[0], shape[1]) * 2 * init_epsilon - init_epsilon for shape in shapes)
 
     @staticmethod
