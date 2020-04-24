@@ -15,7 +15,8 @@ from mymllib.preprocessing import add_intercept, one_hot
     (np.zeros((100, 2)), np.zeros((100, 1)), (2,), ((2, 3), (1, 3)))
 ])
 def test_init_weights(X, y, hidden_layers, expected_shapes):
-    result = BaseNeuralNetwork._init_weights(X, y, hidden_layers=hidden_layers)
+    neural_network = BaseNeuralNetwork(hidden_layers=hidden_layers)
+    result = neural_network._init_weights(X, y)
 
     for i in range(len(expected_shapes)):
         # Verify that weights matrix has correct shape
@@ -92,7 +93,7 @@ def test_cost_gradient__random_input(samples_count, features_count, classes_coun
     X = np.asarray(random_state.rand(samples_count, features_count))
     y = one_hot(1 + np.mod(np.arange(samples_count) + 1, classes_count))[1]
     neural_network = BaseNeuralNetwork(hidden_layers=hidden_layers)
-    initial_weights = neural_network._init_weights(X, y, hidden_layers)
+    initial_weights = neural_network._init_weights(X, y)
     weights = neural_network._optimize_params(X, y, unroll(initial_weights))
 
     analytical_gradient = neural_network._cost_gradient(weights, X, y)
