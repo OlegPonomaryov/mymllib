@@ -1,6 +1,6 @@
 import numpy as np
 from mymllib.optimization import LBFGSB, unroll, undo_unroll
-from mymllib.preprocessing import to_numpy, add_intercept, one_hot
+from mymllib.preprocessing import add_intercept, one_hot
 from mymllib.regression._linear_regression import BaseRegression
 from mymllib.math.functions import sigmoid
 
@@ -30,7 +30,7 @@ class LogisticRegression(BaseRegression):
         :param X: Features values
         :param y: Target values
         """
-        X, y = LogisticRegression._check_data(X, y)
+        X, y = self._check_fit_data(X, y)
         X = add_intercept(X)
         self._labels, Y = one_hot(y)
 
@@ -47,7 +47,7 @@ class LogisticRegression(BaseRegression):
         :param X: Features values
         :return: Target values
         """
-        X = to_numpy(X)
+        X = self._check_predict_data(X)
 
         predictions = super().predict(add_intercept(X))
         if self._predict_probabilities:

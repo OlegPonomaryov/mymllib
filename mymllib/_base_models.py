@@ -21,6 +21,7 @@ class BaseSupervisedModel(BaseModel):
         self._regularization_param = regularization_param
         self._params = None
         self._optimizer = optimizer
+        self._features_count = None
 
     def fit(self, X, y):
         """Train the model.
@@ -36,24 +37,17 @@ class BaseSupervisedModel(BaseModel):
         :param X: Features values
         :return: Target values
         """
-        if X.ndim != 2:
-            raise ValueError("Features values (X) should be a two-dimensional array")
-
-        if X.shape[1] != self._params.shape[0]:
-            raise ValueError(f"Expected {self._params.shape[0]} features, but {X.shape[1]} received")
-
         return self._hypothesis(X, self._params)
 
     def _optimize_params(self, X, y, initial_params):
         return self._optimizer.minimize(self._cost, self._cost_gradient, initial_params, (X, y))
 
-    @staticmethod
-    def _check_data(X, y):
+    def _check_fit_data(self, X, y):
         """Check that X and y have correct dimensionality and matching shapes and convert them to NumPy arrays.
 
         :param X: Features values
         :param y: Target values
-        :return: X and y as NumPy arrays.
+        :return: X and y as NumPy arrays
         """
         X, y = to_numpy(X, y)
 
@@ -66,7 +60,25 @@ class BaseSupervisedModel(BaseModel):
         if X.shape[0] != y.shape[0]:
             raise ValueError("Samples count in features values (X) and target values (y) don't match each other")
 
+        self._features_count = X.shape[1]
+
         return X, y
+
+    def _check_predict_data(self, X):
+        """Check that X has correct dimensionality and shape and convert it to a NumPy array.
+
+        :param X: Features values
+        :return: X as a NumPy arrays
+        """
+        X = to_numpy(X)
+
+        if X.ndim != 2:
+            raise ValueError("Features values (X) should be a two-dimensional array")
+
+        if X.shape[1] != self._features_count:
+            raise ValueError(f"Expected {self._features_count} features, but {X.shape[1]} received")
+
+        return X
 
     @abstractmethod
     def _hypothesis(self, X, params):
