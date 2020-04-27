@@ -1,7 +1,7 @@
 """Tests for the BaseNeuralNetwork class."""
 import pytest
 import numpy as np
-from numpy.testing import assert_array_equal, assert_allclose
+from numpy.testing import assert_array_equal, assert_allclose, assert_almost_equal
 from mymllib.neural_networks import BaseNeuralNetwork
 from mymllib.neural_networks.activations import Sigmoid
 from mymllib.math.tools import gradient
@@ -82,12 +82,12 @@ def test_cost_gradient(X, y, weights):
     analytical_gradient = neural_network._cost_gradient(unrolled_weights, X, y)
     numerical_gradient = gradient(unrolled_weights, neural_network._cost, (X, y))
 
-    assert_allclose(analytical_gradient, numerical_gradient)
+    assert_almost_equal(analytical_gradient, numerical_gradient)
 
 
-@pytest.mark.parametrize("samples_count, features_count", [(3, 2)])
+@pytest.mark.parametrize("samples_count, features_count", [(5, 10)])
 @pytest.mark.parametrize("classes_count", [2, 3])
-@pytest.mark.parametrize("hidden_layers", [(2,), (2, 2)])
+@pytest.mark.parametrize("hidden_layers", [(5,), (10,), (20,), (10, 10, 10)])
 def test_cost_gradient__random_input(samples_count, features_count, classes_count, hidden_layers):
     random_state = np.random.RandomState(seed=7)
     X = np.asarray(random_state.rand(samples_count, features_count))
@@ -99,4 +99,4 @@ def test_cost_gradient__random_input(samples_count, features_count, classes_coun
     analytical_gradient = neural_network._cost_gradient(weights, X, y)
     numerical_gradient = gradient(weights, neural_network._cost, (X, y))
 
-    assert_allclose(analytical_gradient, numerical_gradient)
+    assert_almost_equal(analytical_gradient, numerical_gradient)
