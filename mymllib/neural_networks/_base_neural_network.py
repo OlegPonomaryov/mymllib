@@ -1,7 +1,7 @@
 import numpy as np
 from math import sqrt
 from mymllib import BaseSupervisedModel
-from mymllib.preprocessing import add_intercept
+from mymllib.preprocessing import add_intercept as add_bias
 from mymllib.optimization import unroll, undo_unroll
 from mymllib.neural_networks.activations import Sigmoid
 from mymllib.optimization import LBFGSB
@@ -68,7 +68,7 @@ class BaseNeuralNetwork(BaseSupervisedModel):
         activations = []
         previous_activations = X
         for layer_weights in weights:
-            previous_activations = add_intercept(previous_activations)
+            previous_activations = add_bias(previous_activations)
             activations.append(previous_activations)
             previous_activations = activation_func.activations(previous_activations @ layer_weights.T)
         activations.append(previous_activations)  # Add last layer's activations (network's output) without a bias
