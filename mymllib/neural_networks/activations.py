@@ -1,4 +1,4 @@
-"""Different activation functions for neural netwprks."""
+"""Different activation functions for neural networks."""
 from abc import ABC, abstractmethod
 from mymllib.math.functions import sigmoid
 
@@ -9,26 +9,41 @@ class BaseActivation(ABC):
     @staticmethod
     @abstractmethod
     def activations(x):
-        """Calculate activation function value."""
+        """Calculate activation function value.
+
+        :param x: Function argument
+        :return: Activation value
+        """
         pass
 
     @staticmethod
     @abstractmethod
-    def derivative(x):
-        """Calculate activation function derivative."""
+    def derivative(a):
+        """Calculate activation function derivative.
+
+        :param a: Activation value
+        :return: Activation derivative
+        """
         pass
 
 
 class Sigmoid(BaseActivation):
-    """Base class for activation functions."""
+    """Sigmoid activation functions."""
 
     @staticmethod
     def activations(x):
-        """Calculate activation function value."""
+        """Calculate activation function value.
+
+        :param x: Function argument
+        :return: Activation value
+        """
         return sigmoid(x)
 
     @staticmethod
-    def derivative(x):
-        """Calculate activation function derivative."""
-        a = Sigmoid.activations(x)
+    def derivative(a):
+        """Calculate activation function derivative.
+
+        :param a: Activation value
+        :return: Activation derivative
+        """
         return a * (1 - a)

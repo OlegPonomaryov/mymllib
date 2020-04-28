@@ -81,8 +81,7 @@ class BaseNeuralNetwork(BaseSupervisedModel):
         for i in range(len(activations) - 2, -1, -1):
             D.insert(0, d.T @ activations[i])
             if i > 0:
-                z = activations[i - 1] @ weights[i - 1].T
-                d = d @ weights[i][:, 1:] * activation_func.derivative(z)
+                d = d @ weights[i][:, 1:] * activation_func.derivative(activations[i][:, 1:])
         for i in range(len(D)):
             regularized_weights = regularization_param*weights[i]
             regularized_weights[:, 0] = 0
