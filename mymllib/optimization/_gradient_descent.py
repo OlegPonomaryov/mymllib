@@ -16,11 +16,11 @@ class GradientDescent(BaseOptimizer):
         self._max_iterations = max_iterations
 
     def minimize(self, func, grad, x0, args=()):
-        """Find an optimal arguments array to minimize a function.
+        """Find an optimal parameters array to minimize a function.
 
         :param func: A function to minimize
         :param grad: A gradient of the function
-        :param x0: Initial value of an arguments array to start from
+        :param x0: Initial value of the parameters array to start from
         :param args: Other arguments of the function
         :return: The best arguments array optimizer was able to find to minimize the function
         """
@@ -34,7 +34,7 @@ class GradientDescent(BaseOptimizer):
 
             gradient = grad(x, *args)
 
-            # If absolute values of all partial derivatives are small enough, than coefficients are close enough to the
+            # If absolute values of all partial derivatives are small enough, than parameters are close enough to the
             # minimum and there is no need to continue gradient descent
             if np.abs(gradient).max() <= self._accuracy:
                 break

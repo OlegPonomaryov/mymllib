@@ -1,8 +1,8 @@
-"""Tests for the '_functions' module."""
+"""Tests for the 'tools' module."""
 from math import exp, log
 from numpy.testing import assert_allclose
 from mymllib.preprocessing import to_numpy
-from mymllib.tools import gradient
+from mymllib.math.tools import gradient
 
 
 def f(x):

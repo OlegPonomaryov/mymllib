@@ -1,5 +1,5 @@
 from numpy.linalg import solve, lstsq
-from mymllib.preprocessing import to_numpy, add_intercept
+from mymllib.preprocessing import add_intercept
 from ._base_regression import BaseRegression
 
 
@@ -21,12 +21,12 @@ class LinearRegression(BaseRegression):
         :param X: Features values
         :param y: Target values
         """
-        X, y = LinearRegression._check_data(X, y)
+        X, y = self._check_fit_data(X, y)
         X = add_intercept(X)
         if self._optimizer is not None:
             super().fit(X, y)
         else:
-            self._coefs = self._normal_equation(X, y)
+            self._params = self._normal_equation(X, y)
 
     def predict(self, X):
         """Predict target values.
@@ -34,15 +34,15 @@ class LinearRegression(BaseRegression):
         :param X: Features values
         :return: Target values
         """
-        X = to_numpy(X)
+        X = self._check_predict_data(X)
         return super().predict(add_intercept(X))
 
-    def _hypothesis(self, X, coefs):
-        return X @ coefs
+    def _hypothesis(self, X, params):
+        return X @ params
 
-    def _cost(self, coefs, X, y):
-        return (((self._hypothesis(X, coefs) - y)**2).sum() +
-                self._regularization_param*(coefs[1:]**2).sum()) / (2 * X.shape[0])
+    def _cost(self, params, X, y):
+        return (((self._hypothesis(X, params) - y)**2).sum() +
+                self._regularization_param*(params[1:]**2).sum()) / (2 * X.shape[0])
 
     def _normal_equation(self, X, y):
         if self._regularization_param > 0:

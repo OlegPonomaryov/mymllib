@@ -1,3 +1,4 @@
+"""Various mathematical tools."""
 import numpy as np
 
 
