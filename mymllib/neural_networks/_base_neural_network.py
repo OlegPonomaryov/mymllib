@@ -5,6 +5,7 @@ from mymllib.preprocessing import add_intercept as add_bias
 from mymllib.optimization import unroll, undo_unroll
 from mymllib.neural_networks.activations import Sigmoid
 from mymllib.optimization import LBFGSB
+from mymllib.math.functions import log_loss
 
 
 class BaseNeuralNetwork(BaseSupervisedModel):
@@ -29,12 +30,11 @@ class BaseNeuralNetwork(BaseSupervisedModel):
         weights = self._undo_weights_unroll(params, X, y)
 
         model_output = self._hypothesis(X, weights)
-        log_loss = y*np.log(model_output) + (1 - y)*np.log(1 - model_output)
-        log_loss = -np.sum(log_loss) / X.shape[0]
+        loss = log_loss(model_output, y)
 
         regularization = self._regularization_param / (2 * X.shape[0]) *\
             sum((layer_weights[:, 1:] ** 2).sum() for layer_weights in weights)
-        return log_loss + regularization
+        return loss + regularization
 
     def _cost_gradient(self, params, X, y):
         weights = self._undo_weights_unroll(params, X, y)

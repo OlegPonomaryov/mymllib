@@ -2,7 +2,7 @@ import numpy as np
 from mymllib.optimization import LBFGSB, unroll, undo_unroll
 from mymllib.preprocessing import add_intercept, one_hot
 from mymllib.regression._linear_regression import BaseRegression
-from mymllib.math.functions import sigmoid
+from mymllib.math.functions import sigmoid, log_loss
 
 
 class LogisticRegression(BaseRegression):
@@ -66,14 +66,11 @@ class LogisticRegression(BaseRegression):
     def _cost(self, params, X, y):
         _, params = LogisticRegression._undo_params_unroll(params, X, y)
 
-        log_loss = y*np.log(self._hypothesis(X, params)) + (1 - y)*np.log(1 - self._hypothesis(X, params))
-        # np.mean() is not used for log_loss because for multiclass problems it will divide the sum not only by number
-        # of samples, but also by number of classes and in this case the cost function won't match its gradient defined
-        # in the BaseRegression class.
-        log_loss = -np.sum(log_loss) / X.shape[0]
+        model_output = self._hypothesis(X, params)
+        loss = log_loss(model_output, y)
 
         regularization = self._regularization_param / (2 * X.shape[0]) * (params[1:]**2).sum()
-        return log_loss + regularization
+        return loss + regularization
 
     def _cost_gradient(self, params, X, y):
         params_were_unrolled, params = LogisticRegression._undo_params_unroll(params, X, y)

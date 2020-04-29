@@ -19,3 +19,8 @@ def sigmoid(z):
     # because logistic regression cost function also calculates logarithm of 1 - sigmoid(z), so all return values that
     # are equal to 1 are replaced with the largest representable floating point value that is less than 1.
     return np.minimum(h, 0.9999999999999999)
+
+
+def log_loss(predicted, actual):
+    """Return log loss value."""
+    return -np.sum(actual * np.log(predicted) + (1 - actual) * np.log(1 - predicted)) / predicted.shape[0]
