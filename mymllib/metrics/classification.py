@@ -49,7 +49,7 @@ def f1_score(y_actual, y_predicted, target_label=1, use_target_for_multiclass=Fa
     for label in target_labels:
         precision = _precision(y_actual, y_predicted, label)
         recall = _recall(y_actual, y_predicted, label)
-        f1_score = 2 * precision * recall / (precision + recall)
+        f1_score = 2 * precision * recall / (precision + recall) if precision + recall != 0 else 0
         if calculate_weighted:
             f1_score *= np.count_nonzero(y_actual == label)
         total_f1_score += f1_score
@@ -67,7 +67,7 @@ def _precision(y_actual, y_predicted, target_label):
     predicted_positive_count = np.count_nonzero(predicted_positive)
 
     if predicted_positive_count == 0:
-        raise ValueError(f"Predicted labels don't contain the target label '{target_label}'")
+        return 0
 
     true_positive = y_actual[predicted_positive] == target_label
     return np.count_nonzero(true_positive) / predicted_positive_count
@@ -80,7 +80,7 @@ def _recall(y_actual, y_predicted, target_label):
     actual_positive_count = np.count_nonzero(actual_positive)
 
     if actual_positive_count == 0:
-        raise ValueError(f"Actual labels don't contain the target label '{target_label}'")
+        return 0
 
     true_positive = y_predicted[actual_positive] == target_label
     return np.count_nonzero(true_positive) / actual_positive_count
