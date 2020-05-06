@@ -68,7 +68,7 @@ class BaseSupervisedModel(BaseModel):
         """Check that X has correct dimensionality and shape and convert it to a NumPy array.
 
         :param X: Features values
-        :return: X as a NumPy arrays
+        :return: X as a NumPy array
         """
         X = to_numpy(X)
 
@@ -91,3 +91,53 @@ class BaseSupervisedModel(BaseModel):
     @abstractmethod
     def _cost_gradient(self, params, X, y):
         pass
+
+
+class BaseUnsupervisedModel(BaseModel):
+    """Base class for unsupervised models."""
+
+    def fit(self, X):
+        """Train the model.
+
+        :param X: Features values
+        """
+        pass
+
+    def predict(self, X):
+        """Predict target values.
+
+        :param X: Features values
+        :return: Predicted values
+        """
+        pass
+
+    def _check_fit_data(self, X):
+        """Check that X has correct dimensionality and convert it to a NumPy array.
+
+        :param X: Features values
+        :return: X as a NumPy array
+        """
+        X = to_numpy(X)
+
+        if X.ndim != 2:
+            raise ValueError("Features values (X) should be a two-dimensional array")
+
+        self._features_count = X.shape[1]
+
+        return X
+
+    def _check_predict_data(self, X):
+        """Check that X has correct dimensionality and shape and convert it to a NumPy array.
+
+        :param X: Features values
+        :return: X as a NumPy array
+        """
+        X = to_numpy(X)
+
+        if X.ndim != 2:
+            raise ValueError("Features values (X) should be a two-dimensional array")
+
+        if X.shape[1] != self._features_count:
+            raise ValueError(f"Expected {self._features_count} features, but {X.shape[1]} received")
+
+        return X
