@@ -21,13 +21,15 @@ class DataScaler:
         self._standard_deviation[self._standard_deviation == 0] = 1
         return self
 
-    def scale(self, X):
+    def scale(self, X, by_mean=True, by_std=True):
         """Scale a data by previously calculated mean and standard deviation.
 
         :param X: A data to scale
+        :param by_mean: Whether to scale by mean
+        :param by_std: Whether to scale by standard deviation
         :return: Scaled data
         """
         X = to_numpy(X)
         if X.shape[1] != len(self._mean):
             raise ValueError("Data passed to transform() doesn't have same columns count as the one passed to fit()")
-        return (X - self._mean) / self._standard_deviation
+        return (X - (self._mean if by_mean else 0)) / (self._standard_deviation if by_std else 1)
