@@ -1,5 +1,5 @@
 from abc import ABC
-from mymllib._base_models import BaseSupervisedModel
+from mymllib._base import BaseSupervisedModel
 
 
 class BaseRegression(BaseSupervisedModel, ABC):

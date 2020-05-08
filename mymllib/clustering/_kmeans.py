@@ -41,7 +41,7 @@ class KMeans(BaseUnsupervisedModel):
         :param X: Features values of data examples
         :return: Indices of clusters to which each example was assigned
         """
-        X = self._check_predict_data(X)
+        X = self._check_data(X)
         distances = self._find_distances(X, self.cluster_centroids)
         return self._find_closest_centroids(distances)
 

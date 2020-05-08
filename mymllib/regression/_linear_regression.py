@@ -34,7 +34,7 @@ class LinearRegression(BaseRegression):
         :param X: Features values
         :return: Target values
         """
-        X = self._check_predict_data(X)
+        X = self._check_data(X)
         return super().predict(add_intercept(X))
 
     def _hypothesis(self, X, params):

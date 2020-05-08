@@ -47,7 +47,7 @@ class LogisticRegression(BaseRegression):
         :param X: Features values
         :return: Target values
         """
-        X = self._check_predict_data(X)
+        X = self._check_data(X)
 
         predictions = super().predict(add_intercept(X))
         if self._predict_probabilities:
