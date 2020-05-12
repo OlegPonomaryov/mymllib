@@ -1,11 +1,10 @@
-import numpy as np
-from math import sqrt
 from mymllib import BaseSupervisedModel
 from mymllib.preprocessing import add_intercept as add_bias
 from mymllib.optimization import unroll, undo_unroll
 from mymllib.neural_networks.activations import Sigmoid
 from mymllib.optimization import LBFGSB
 from mymllib.math.functions import log_loss
+from mymllib.tools import glorot_init
 
 
 class BaseNeuralNetwork(BaseSupervisedModel):
@@ -47,16 +46,11 @@ class BaseNeuralNetwork(BaseSupervisedModel):
         return undo_unroll(weights, shapes)
 
     def _init_weights(self, X, y):
-        # Weights are initialized with random values using Glorot initialization (as it is implemented in scikit-learn -
-        # with special factor value for sigmoid activation function)
+        # Weights are initialized with random values using Glorot initialization as it is implemented in scikit-learn -
+        # with special factor value for sigmoid activation function
         factor = 2 if self._activation == Sigmoid else 6
         shapes = BaseNeuralNetwork._get_weights_shapes(X, y, self._hidden_layers)
-        weights = []
-        for shape in shapes:
-            init_epsilon = sqrt(factor / (shape[0] + shape[1]))
-            layer_weights = np.random.rand(shape[0], shape[1]) * 2 * init_epsilon - init_epsilon
-            weights.append(layer_weights)
-        return weights
+        return glorot_init(shapes, factor)
 
     @staticmethod
     def _get_weights_shapes(X, y, hidden_layers):
