@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.spatial import KDTree
 from mymllib import BaseSupervisedModel
 from mymllib.optimization import LBFGSB, unroll, undo_unroll
 from mymllib.tools import glorot_init
@@ -24,6 +25,7 @@ class CollaborativeFiltering(BaseSupervisedModel):
         self._users_params = None
         self._items = None
         self._items_params = None
+        self._items_tree = None
 
     def fit(self, X, y):
         """Train the model.
@@ -37,6 +39,7 @@ class CollaborativeFiltering(BaseSupervisedModel):
         initial_params = unroll(glorot_init(self._get_params_shapes()))
         params = self._optimizer.minimize(self._cost, self._cost_gradient, initial_params, (self._Y_source,))
         self._users_params, self._items_params = self._undo_params_unroll(params)
+        self._items_tree = KDTree(self._items_params)
 
     def predict(self, X):
         """Predict ratings.
@@ -71,6 +74,26 @@ class CollaborativeFiltering(BaseSupervisedModel):
             else:
                 y[i] = Y[item_index, user_index]
         return y
+
+    def find_similar_items(self, item, count):
+        if count < 1:
+            raise ValueError(f"Similar items count should be greater than 0, but {count} received")
+
+        item_index = self._items.index(item)
+        item_params = self._items_params[item_index]
+
+        # Because KDTree.query() treats the requested item as a new item not from the initial data set, the closest
+        # neighbor to the item will be the item itself, so the requested number of neighbors should be greater by 1 than
+        # the requested number of similar items
+        similar_items_indices = self._items_tree.query(item_params, count + 1)[1][:len(self._items)].tolist()
+        try:
+            # The requested item is removed from the list of similar items
+            similar_items_indices.remove(item_index)
+        except ValueError:
+            # If the requested item wasn't in the list (if, for instance, there were other items with exactly the same
+            # parameters), the list is truncated to match the requested number of similar items
+            similar_items_indices = similar_items_indices[:-1]
+        return tuple(self._items[index] for index in similar_items_indices)
 
     def _check_X_y(self, X, y):
         X = self._check_X(X)

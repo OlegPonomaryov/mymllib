@@ -1,7 +1,9 @@
 """Tests for the CollaborativeFiltering class."""
-import pytest
 import numpy as np
+
+import pytest
 from numpy.testing import assert_array_equal, assert_allclose
+
 from mymllib.recommender import CollaborativeFiltering
 from mymllib.tools import glorot_init
 from mymllib.optimization import unroll
@@ -120,3 +122,25 @@ def test_fit_predict():
     assert_allclose(y_test, y_test_expected, rtol=1E-4, atol=1E-4)
 
 
+@pytest.mark.parametrize("item, count, expected", [
+    ("Cute puppies of love", 2, {"Love at last", "Romance forever"}),
+    ("Nonstop car chases", 1, {"Swords vs. karate"})])
+def test_find_similar_items(item, count, expected):
+    collaborative_filtering = CollaborativeFiltering(2, 0)
+    collaborative_filtering.fit(X_train, y_train)
+
+    similar_items = collaborative_filtering.find_similar_items(item, count)
+
+    assert set(similar_items) == expected
+
+
+# This test verifies that the function can handle requested items count that is greater then total items count and also
+# checks that similar items will appear in the list earlier
+def test_find_similar_items__check_order():
+    collaborative_filtering = CollaborativeFiltering(2, 0)
+    collaborative_filtering.fit(X_train, y_train)
+
+    similar_items = collaborative_filtering.find_similar_items("Cute puppies of love", 100)
+
+    assert set(similar_items[:2]) == {"Love at last", "Romance forever"}
+    assert set(similar_items[2:]) == {"Nonstop car chases", "Swords vs. karate"}
