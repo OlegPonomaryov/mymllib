@@ -6,25 +6,62 @@ from mymllib.recommender import CollaborativeFiltering
 from mymllib.tools import glorot_init
 from mymllib.optimization import unroll
 from mymllib.math.tools import gradient
+from mymllib.preprocessing import to_numpy
 
 
-# Simple ratings matrix
-Y = np.asarray(
-    [[5,      5,      0,      0],
-     [5,      np.nan, np.nan, 0],
-     [np.nan, 4,      0,      np.nan],
-     [0,      0,      5,      4],
-     [0,      0,      5,      np.nan]])
+# Simple movies ratings dataset from the Machine Learning course by Andrew Ng
+X_train = [["Alice", "Love at last"],
+           ["Alice", "Romance forever"],
+           ["Alice", "Nonstop car chases"],
+           ["Alice", "Swords vs. karate"],
+           ["Bob", "Love at last"],
+           ["Bob", "Cute puppies of love"],
+           ["Bob", "Nonstop car chases"],
+           ["Bob", "Swords vs. karate"],
+           ["Carol", "Love at last"],
+           ["Carol", "Cute puppies of love"],
+           ["Carol", "Nonstop car chases"],
+           ["Carol", "Swords vs. karate"],
+           ["Dave", "Love at last"],
+           ["Dave", "Romance forever"],
+           ["Dave", "Nonstop car chases"]]
+y_train = [5, 5, 0, 0, 5, 4, 0, 0, 0, 0, 5, 5, 0, 0, 4]
 
-# Simple test data to predict ratings
-X = np.asarray([[0, 2],
-                [1, 1],
-                [2, 1],
-                [3, 2],
-                [3, 4]])
+# Expected ratings matrix
+Y_expected = [[np.nan, 4,      0,      np.nan],
+              [5,      5,      0,      0],
+              [0,      0,      5,      4],
+              [5,      np.nan, np.nan, 0],
+              [0,      0,      5,      np.nan]]
 
-# Expected ratings prediction
-expected = [4, 5, 0, 0, 4]
+# Expected list of unique users
+users_expected = ["Alice", "Bob", "Carol", "Dave"]
+
+# Expected list of unique movies
+movies_expected = ["Cute puppies of love", "Love at last", "Nonstop car chases", "Romance forever", "Swords vs. karate"]
+
+# Test data that include all unrated movies for each user
+X_test = [["Alice", "Cute puppies of love"],
+          ["Bob", "Romance forever"],
+          ["Carol", "Romance forever"],
+          ["Dave", "Cute puppies of love"],
+          ["Dave", "Swords vs. karate"],
+          ["Dave", "Deadly space rabbits"],  # Movie is new, rating should be 0
+          ["Anthony", "Swords vs. karate"],  # User is new, rating should be the average rating of the movie
+          ["Anthony", "Deadly space rabbits"]]  # Both user and movie are new, rating should be 0
+
+# Expected ratings predictions
+y_test_expected = [4, 5, 0, 0, 4, 0, 5/3, 0]
+
+
+def test_build_ratings_matrix():
+    collaborative_filtering = CollaborativeFiltering(7)
+
+    Y, users, movies = collaborative_filtering._build_ratings_matrix(to_numpy(X_train), to_numpy((y_train)))
+
+    assert_array_equal(Y, Y_expected)
+    assert_array_equal(users, users_expected)
+    assert_array_equal(movies, movies_expected)
 
 
 @pytest.mark.parametrize("predicted", [
@@ -56,9 +93,10 @@ def test_error(predicted, actual, expected):
 
 
 @pytest.mark.parametrize("features_count", [3, 7, 20])
-@pytest.mark.parametrize("Y", [Y])
+@pytest.mark.parametrize("Y", [Y_expected])
 @pytest.mark.parametrize("regularization_param", [0, 1, 10])
 def test_cost_gradient(features_count, regularization_param, Y):
+    Y = to_numpy(Y)
     users_count = Y.shape[1]
     items_count = Y.shape[0]
     params = unroll(glorot_init(((users_count, features_count), (items_count, features_count))))
@@ -70,17 +108,15 @@ def test_cost_gradient(features_count, regularization_param, Y):
     analytical_gradient = collaborative_filtering._cost_gradient(params, Y)
     numerical_gradient = gradient(params, collaborative_filtering._cost, (Y,))
 
-    assert_allclose(analytical_gradient, numerical_gradient, rtol=1E-5)
+    assert_allclose(analytical_gradient, numerical_gradient, rtol=1E-4, atol=1E-4)
 
 
-@pytest.mark.parametrize("features_count, regularization_param", [(2, 0)])
-@pytest.mark.parametrize("Y, X, expected", [(Y, X, expected)])
-def test_fit_predict(features_count, regularization_param, Y, X, expected):
-    collaborative_filtering = CollaborativeFiltering(features_count, regularization_param)
+def test_fit_predict():
+    collaborative_filtering = CollaborativeFiltering(2, 0)
 
-    collaborative_filtering.fit(Y)
-    y = collaborative_filtering.predict(X)
+    collaborative_filtering.fit(X_train, y_train)
+    y_test = collaborative_filtering.predict(X_test)
 
-    assert_allclose(y, expected, rtol=1E-4, atol=1E-4)
+    assert_allclose(y_test, y_test_expected, rtol=1E-4, atol=1E-4)
 
 
