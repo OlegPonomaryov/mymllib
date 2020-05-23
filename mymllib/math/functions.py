@@ -4,15 +4,7 @@ import numpy as np
 
 def sigmoid(z):
     """Return sigmoid function value for product of X and theta."""
-
-    # A value of exp(n) exceeds a capacity of double-precision floating-point variables if n is higher than
-    # approximately 709.7. For np.exp() this results in warning message and inf return value, which also makes the
-    # sigmoid function to return 0. This may cause errors, because, for instance, cost function of logistic regression
-    # calculates logarithm of sigmoid's return value, which cannot be calculated for 0. To avoid this, all values of z
-    # that are lower than -709.7 (because z is used with '-' in np.exp()) are replaced with -709.7.
-    z = np.maximum(z, -709.7)
-
-    h = 1 / (1 + np.exp(-z))
+    h = 1 / (1 + safe_exp(-z))
 
     # Values that are very close to 1 (like 0.9999999999999999999999) cannot be stored in double-precision floating-
     # point variables due to their significant digits limitation and are rounded to 1. This may cause errors too,
@@ -21,6 +13,30 @@ def sigmoid(z):
     return np.minimum(h, 0.9999999999999999)
 
 
-def log_loss(predicted, actual):
-    """Return log loss value."""
+def log_cost(predicted, actual):
+    """Return logistic (sigmoid) cost function value (without regularization)."""
     return -np.sum(actual * np.log(predicted) + (1 - actual) * np.log(1 - predicted)) / predicted.shape[0]
+
+
+def softmax(z):
+    """Return softmax function value for product of X and theta."""
+    t = safe_exp(z)
+    h = t / t.sum(axis=1, keepdims=True)
+    return h
+
+
+def softmax_cost(predicted, actual):
+    """Return softmax cost function value (without regularization)."""
+    # Because softmax function may return exactly 0, a small value added to its result in order to avoid attempts to
+    # calculate log(0)
+    return -np.sum(actual * np.log(predicted + 1E-15)) / predicted.shape[0]
+
+
+def safe_exp(z):
+    # A value of exp(n) exceeds a capacity of double-precision floating-point variables if n is higher than
+    # approximately 709.7. For np.exp() this results in warning message and inf return value, which may cause further
+    # problems when using it (like making sigmoid function return 0 which results in an attempt to calculate log(0) in
+    # its cost function). To avoid this, all values of z that are higher than 709.7 are replaced with 709.7.
+    z = np.minimum(z, 709.7)
+    return np.exp(z)
+
