@@ -11,13 +11,10 @@ class LogisticRegression(BaseRegression):
     :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is
         used)
     :param optimizer: An optimizer to use for minimizing a cost function
-    :param predict_probabilities: Whether to return probabilities of samples to belong to each of the classes (ordered
-        by their labels) instead of chosen classes
     """
 
-    def __init__(self, regularization_param=0, optimizer=LBFGSB(), predict_probabilities=False):
+    def __init__(self, regularization_param=0, optimizer=LBFGSB()):
         super().__init__(regularization_param=regularization_param, optimizer=optimizer)
-        self._predict_probabilities = predict_probabilities
         self._labels = None
 
     def fit(self, X, y):
@@ -40,14 +37,11 @@ class LogisticRegression(BaseRegression):
         X = self._check_data(X)
 
         predictions = super().predict(add_intercept(X))
-        if self._predict_probabilities:
-            return predictions.flatten() if len(self._labels) == 2 else predictions
+        if len(self._labels) == 2:
+            predictions = (predictions >= 0.5) * 1
         else:
-            if len(self._labels) == 2:
-                predictions = (predictions >= 0.5) * 1
-            else:
-                predictions = np.argmax(predictions, axis=1)
-            return self._labels.take(predictions).flatten()
+            predictions = np.argmax(predictions, axis=1)
+        return self._labels.take(predictions).flatten()
 
     def _hypothesis(self, X, params):
         z = X @ params
