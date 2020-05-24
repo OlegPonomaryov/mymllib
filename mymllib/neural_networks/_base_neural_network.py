@@ -1,9 +1,9 @@
+import numpy as np
 from mymllib import BaseSupervisedModel
 from mymllib.preprocessing import add_intercept as add_bias
 from mymllib.optimization import unroll, undo_unroll
 from mymllib.neural_networks.activations import Sigmoid
 from mymllib.optimization import LBFGSB
-from mymllib.math.functions import log_cost
 from mymllib.tools import glorot_init
 
 
@@ -21,23 +21,24 @@ class BaseNeuralNetwork(BaseSupervisedModel):
         super().__init__(regularization_param=regularization_param, optimizer=optimizer)
         self._hidden_layers = hidden_layers
         self._activation = activation
+        self._output_activation = None
 
     def _hypothesis(self, X, params):
-        return BaseNeuralNetwork._forward_propagate(X, params, self._activation)[-1]
+        return BaseNeuralNetwork._forward_propagate(X, params, self._activation, self._output_activation)[-1]
 
     def _cost(self, params, X, y):
         weights = self._undo_weights_unroll(params, X, y)
 
         model_output = self._hypothesis(X, weights)
-        cost = log_cost(model_output, y)
+        loss_sum = np.sum(self._output_activation.loss(model_output, y))
 
-        regularization = self._regularization_param / (2 * X.shape[0]) *\
-            sum((layer_weights[:, 1:]**2).sum() for layer_weights in weights)
-        return cost + regularization
+        regularization = self._regularization_param / 2 * sum(np.sum(w[:, 1:]**2) for w in weights)
+
+        return (loss_sum + regularization) / X.shape[0]
 
     def _cost_gradient(self, params, X, y):
         weights = self._undo_weights_unroll(params, X, y)
-        activations = self._forward_propagate(X, weights, self._activation)
+        activations = self._forward_propagate(X, weights, self._activation, self._output_activation)
         gradient = self._backpropagate(y, weights, activations, self._regularization_param, self._activation)
         return unroll(gradient)
 
@@ -58,15 +59,22 @@ class BaseNeuralNetwork(BaseSupervisedModel):
         return tuple((layers[i + 1], layers[i] + 1) for i in range(len(layers) - 1))
 
     @staticmethod
-    def _forward_propagate(X, weights, activation_func):
-        activations = []
-        previous_activations = X
-        for layer_weights in weights:
-            previous_activations = add_bias(previous_activations)
-            activations.append(previous_activations)
-            previous_activations = activation_func.activations(previous_activations @ layer_weights.T)
-        activations.append(previous_activations)  # Add last layer's activations (network's output) without a bias
-        return activations
+    def _forward_propagate(X, weights, activation_func, output_activation):
+        net_activations = [add_bias(X)]
+
+        # Calculate activations of the hidden layers
+        for layer_weights in weights[:-1]:
+            previous_layer_activations = net_activations[-1]
+            layer_activations = activation_func.activations(previous_layer_activations @ layer_weights.T)
+            net_activations.append(add_bias(layer_activations))
+
+        # Calculate activations of the output layer
+        output_layer_weights = weights[-1]
+        previous_layer_activations = net_activations[-1]
+        output_layer_activations = output_activation.activations(previous_layer_activations @ output_layer_weights.T)
+        net_activations.append(output_layer_activations)
+
+        return net_activations
 
     # noinspection PyPep8Naming
     @staticmethod

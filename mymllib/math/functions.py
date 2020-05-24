@@ -13,9 +13,14 @@ def sigmoid(z):
     return np.minimum(h, 0.9999999999999999)
 
 
+def log_loss(predicted, actual):
+    """Return logistic (sigmoid) loss function value."""
+    return -(actual * np.log(predicted) + (1 - actual) * np.log(1 - predicted))
+
+
 def log_cost(predicted, actual):
     """Return logistic (sigmoid) cost function value (without regularization)."""
-    return -np.sum(actual * np.log(predicted) + (1 - actual) * np.log(1 - predicted)) / predicted.shape[0]
+    return np.sum(log_loss(predicted, actual)) / predicted.shape[0]
 
 
 def softmax(z):
@@ -25,11 +30,16 @@ def softmax(z):
     return h
 
 
-def softmax_cost(predicted, actual):
-    """Return softmax cost function value (without regularization)."""
+def softmax_loss(predicted, actual):
+    """Return softmax loss function value."""
     # Because softmax function may return exactly 0, a small value added to its result in order to avoid attempts to
     # calculate log(0)
-    return -np.sum(actual * np.log(predicted + 1E-15)) / predicted.shape[0]
+    return -(actual * np.log(predicted + 1E-15))
+
+
+def softmax_cost(predicted, actual):
+    """Return softmax cost function value (without regularization)."""
+    return np.sum(softmax_loss(predicted, actual)) / predicted.shape[0]
 
 
 def safe_exp(z):

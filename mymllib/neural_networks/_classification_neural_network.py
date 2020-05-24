@@ -1,8 +1,9 @@
 import numpy as np
 from mymllib.neural_networks import BaseNeuralNetwork
-from mymllib.preprocessing import one_hot, to_numpy
+from mymllib.preprocessing import one_hot
 from mymllib.optimization import unroll
 from mymllib.neural_networks.activations import Sigmoid
+from mymllib.neural_networks.output_activations import SigmoidOutput, SoftmaxOutput
 from mymllib.optimization import LBFGSB
 
 
@@ -29,6 +30,7 @@ class ClassificationNeuralNetwork(BaseNeuralNetwork):
         """
         X, y = self._check_fit_data(X, y)
         self._labels, Y = one_hot(y)
+        self._output_activation = SoftmaxOutput if Y.shape[1] > 2 else SigmoidOutput
         initial_weights = self._init_weights(X, Y)
         weights = self._optimize_params(X, Y, unroll(initial_weights))
         self._params = self._undo_weights_unroll(weights, X, Y)
