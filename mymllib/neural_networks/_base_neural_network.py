@@ -32,7 +32,7 @@ class BaseNeuralNetwork(BaseSupervisedModel):
         cost = log_cost(model_output, y)
 
         regularization = self._regularization_param / (2 * X.shape[0]) *\
-            sum((layer_weights[:, 1:] ** 2).sum() for layer_weights in weights)
+            sum((layer_weights[:, 1:]**2).sum() for layer_weights in weights)
         return cost + regularization
 
     def _cost_gradient(self, params, X, y):
@@ -68,16 +68,21 @@ class BaseNeuralNetwork(BaseSupervisedModel):
         activations.append(previous_activations)  # Add last layer's activations (network's output) without a bias
         return activations
 
+    # noinspection PyPep8Naming
     @staticmethod
     def _backpropagate(y, weights, activations, regularization_param, activation_func):
-        D = []
-        d = activations[-1] - y
+        dL_dW = []
+        dL_dz = activations[-1] - y
         for i in range(len(activations) - 2, -1, -1):
-            D.insert(0, d.T @ activations[i])
+            dL_dW.insert(0, dL_dz.T @ activations[i])
             if i > 0:
-                d = d @ weights[i][:, 1:] * activation_func.derivative(activations[i][:, 1:])
-        for i in range(len(D)):
+                dL_da = dL_dz @ weights[i][:, 1:]
+                da_dz = activation_func.derivative(activations[i][:, 1:])
+                dL_dz = dL_da * da_dz
+
+        dJ_dW = list()
+        for i in range(len(dL_dW)):
             regularized_weights = regularization_param*weights[i]
             regularized_weights[:, 0] = 0
-            D[i] = (D[i] + regularized_weights) / y.shape[0]
-        return D
+            dJ_dW.append((dL_dW[i] + regularized_weights) / y.shape[0])
+        return dJ_dW
