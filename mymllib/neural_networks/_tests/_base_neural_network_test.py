@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 from numpy.testing import assert_array_equal, assert_allclose, assert_almost_equal
 from mymllib.neural_networks import BaseNeuralNetwork
-from mymllib.neural_networks.activations import Sigmoid
+from mymllib.neural_networks.activations import Sigmoid, Tanh, ReLU, LeakyReLU
 from mymllib.neural_networks.output_activations import SigmoidOutput, SoftmaxOutput
 from mymllib.math.tools import gradient
 from mymllib.optimization import unroll
@@ -15,8 +15,9 @@ from mymllib.preprocessing import add_intercept, one_hot
     (np.zeros((100, 16)), np.zeros((100, 9)), (27, 27), ((27, 17), (27, 28), (9, 28))),
     (np.zeros((100, 2)), np.zeros((100, 1)), (2,), ((2, 3), (1, 3)))
 ])
-def test_init_weights(X, y, hidden_layers, expected_shapes):
-    neural_network = BaseNeuralNetwork(hidden_layers=hidden_layers)
+@pytest.mark.parametrize("activation", [Sigmoid, Tanh, ReLU, LeakyReLU])
+def test_init_weights(X, y, hidden_layers, activation, expected_shapes):
+    neural_network = BaseNeuralNetwork(hidden_layers=hidden_layers, activation=activation)
     result = neural_network._init_weights(X, y)
 
     for i in range(len(expected_shapes)):
@@ -82,9 +83,10 @@ def test_forward_propagate(X, weights, output_activation, expected_activations):
     (np.asarray(X), np.asarray(expected_activations_mo[-1]), (np.random.rand(2, 3)*2-1, np.random.rand(2, 3)*2-1),
      SoftmaxOutput)
 ])
-def test_cost_gradient(X, y, weights, output_activation):
+@pytest.mark.parametrize("activation", [Sigmoid, Tanh, ReLU, LeakyReLU])
+def test_cost_gradient(X, y, weights, activation, output_activation):
     unrolled_weights = unroll(weights)
-    neural_network = BaseNeuralNetwork(hidden_layers=(2,), regularization_param=1, activation=activation_function)
+    neural_network = BaseNeuralNetwork(hidden_layers=(2,), regularization_param=1, activation=activation)
     neural_network._output_activation = output_activation
 
     analytical_gradient = neural_network._cost_gradient(unrolled_weights, X, y)
@@ -94,15 +96,17 @@ def test_cost_gradient(X, y, weights, output_activation):
 
 
 @pytest.mark.parametrize("samples_count, features_count", [(5, 10)])
+@pytest.mark.parametrize("activation", [Sigmoid, Tanh, ReLU, LeakyReLU])
 @pytest.mark.parametrize("classes_count, output_activation", [
     (2, SigmoidOutput), (3, SigmoidOutput), (3, SoftmaxOutput)])
 @pytest.mark.parametrize("hidden_layers", [(5,), (10,), (20,), (10, 10, 10)])
-def test_cost_gradient__random_input(samples_count, features_count, classes_count, hidden_layers, output_activation):
+def test_cost_gradient__random_input(samples_count, features_count, classes_count, hidden_layers,
+                                     activation, output_activation):
     random_state = np.random.RandomState(seed=7)
     X = np.asarray(random_state.rand(samples_count, features_count))
     y = one_hot(1 + np.mod(np.arange(samples_count) + 1, classes_count))[1]
 
-    neural_network = BaseNeuralNetwork(hidden_layers=hidden_layers)
+    neural_network = BaseNeuralNetwork(hidden_layers=hidden_layers, activation=activation)
     neural_network._output_activation = output_activation
     initial_weights = neural_network._init_weights(X, y)
     weights = neural_network._optimize_params(X, y, unroll(initial_weights))
