@@ -1,7 +1,7 @@
 """Different activation functions for neural networks."""
 from abc import ABC, abstractmethod
 import numpy as np
-from mymllib.math.functions import sigmoid, tanh
+from mymllib.math.functions import sigmoid, tanh, relu, leaky_relu
 
 
 class BaseActivation(ABC):
@@ -82,7 +82,7 @@ class ReLU(BaseActivation):
         :param x: Function argument
         :return: Activation value
         """
-        return np.maximum(0, x)
+        return relu(x)
 
     @staticmethod
     def derivative(a):
@@ -106,9 +106,7 @@ class LeakyReLU(BaseActivation):
         :param x: Function argument
         :return: Activation value
         """
-        y = x.astype(float, copy=True)
-        y[y < 0] *= 0.01
-        return y
+        return leaky_relu(x)
 
     @staticmethod
     def derivative(a):
