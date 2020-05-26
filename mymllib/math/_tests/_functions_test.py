@@ -1,39 +1,44 @@
 """Tests for the 'functions' module."""
 import numpy as np
-from numpy.testing import assert_allclose
-from mymllib.math.functions import sigmoid
+from numpy.testing import assert_allclose, assert_array_equal
+from mymllib.math.functions import sigmoid, tanh, relu, leaky_relu
 
 
 def test_sigmoid():
-    z = np.asarray([[-4.6, 0, 4.6],
-                    [100, -100, 0]])
-    expected = [[0.01, 0.5, 0.99],
-                [1,    0,   0.5]]
+    z = np.asarray([[100], [-100], [0]])
+    expected = np.asarray([[1], [0], [0.5]])
 
     result = sigmoid(z)
 
     assert_allclose(result, expected, atol=5E-5)
 
 
-# Test that for a very large argument the sigmoid function returns a value close to 0, but not exactly equal to it (to
-# avoid errors when calculating log(sigmoid()) in the logistic regression cost function)
-def test_sigmoid__very_small_argument__result_greater_than_0():
-    z = np.asarray([[-1E9, -1E9],
-                    [-1E9, -1E9]])
+def test_tanh():
+    z = np.asarray([[100], [-100], [0]])
+    expected = np.asarray([[1], [-1], [0]])
 
-    result = sigmoid(z)
+    result = tanh(z)
 
-    assert_allclose(result, 0, atol=1E-15)
-    assert np.count_nonzero(result <= 0) == 0
+    assert_allclose(result, expected, atol=5E-5)
 
 
-# Test that for a very large argument the sigmoid function returns a value close to 1, but not exactly equal to it (to
-# avoid errors when calculating log(1 - sigmoid()) in the logistic regression cost function)
-def test_sigmoid__very_large_argupment__result_less_than_1():
-    z = np.asarray([[1E9, 1E9],
-                    [1E9, 1E9]])
+def test_relu():
+    z = np.asarray([[-200, 0,     200],
+                    [1,    1E-20, -1E-20]])
+    expected = np.asarray([[0, 0,     200],
+                           [1, 1E-20, 0]])
 
-    result = sigmoid(z)
+    result = relu(z)
 
-    assert_allclose(result, 1, atol=1E-15)
-    assert np.count_nonzero(result >= 1) == 0
+    assert_array_equal(result, expected)
+
+
+def test_leaky_relu():
+    z = np.asarray([[-200, 0,     200],
+                    [1,    1E-20, -1E-20]])
+    expected = np.asarray([[-2, 0,     200],
+                           [1, 1E-20, -1E-22]])
+
+    result = leaky_relu(z)
+
+    assert_allclose(result, expected, rtol=1E-15)

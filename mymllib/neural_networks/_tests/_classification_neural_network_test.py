@@ -1,15 +1,17 @@
-"""Tests for the LogisticRegression class."""
-from mymllib.neural_networks import ClassificationNeuralNetwork
-from mymllib._test_data.classification import X, y, y_text, y_bin, test_set_start
+"""Tests for the ClassificationNeuralNetwork class."""
 import pytest
 from numpy.testing import assert_array_equal
+from mymllib._test_data.classification import X, y, y_text, y_bin, test_set_start
+from mymllib.neural_networks import ClassificationNeuralNetwork
+from mymllib.neural_networks.activations import Sigmoid, Tanh, ReLU, LeakyReLU
 
 
 @pytest.mark.parametrize("y", [y_bin, y, y_text])
 @pytest.mark.parametrize("hidden_layers", [(), (5,)])
-def test_fit_predict(y, hidden_layers):
+@pytest.mark.parametrize("activation", [Sigmoid, Tanh, ReLU, LeakyReLU])
+def test_fit_predict(y, hidden_layers, activation):
     neural_network = ClassificationNeuralNetwork(
-        hidden_layers=hidden_layers, regularization_param=1)
+        hidden_layers=hidden_layers, activation=activation, regularization_param=1)
 
     neural_network.fit(X[:test_set_start], y[:test_set_start])
     predictions = neural_network.predict(X)

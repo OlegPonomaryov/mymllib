@@ -1,14 +1,12 @@
-import numpy as np
 from mymllib.neural_networks import BaseNeuralNetwork
-from mymllib.preprocessing import one_hot
 from mymllib.optimization import unroll
 from mymllib.neural_networks.activations import Sigmoid
-from mymllib.neural_networks.output_activations import SigmoidOutput, SoftmaxOutput
+from mymllib.neural_networks.output_activations import IdentityOutput
 from mymllib.optimization import LBFGSB
 
 
-class ClassificationNeuralNetwork(BaseNeuralNetwork):
-    """Feedforward fully connected neural network for classification problems.
+class RegressionNeuralNetwork(BaseNeuralNetwork):
+    """Feedforward fully connected neural network for regression problems.
 
     :param hidden_layers: Sizes of hidden layers of the neural network
     :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is
@@ -20,7 +18,7 @@ class ClassificationNeuralNetwork(BaseNeuralNetwork):
     def __init__(self, hidden_layers=(), regularization_param=0, optimizer=LBFGSB(), activation=Sigmoid):
         super().__init__(hidden_layers=hidden_layers, regularization_param=regularization_param,
                          optimizer=optimizer, activation=activation)
-        self._labels = None
+        self._output_activation = IdentityOutput
 
     def fit(self, X, y):
         """Train the model.
@@ -29,11 +27,10 @@ class ClassificationNeuralNetwork(BaseNeuralNetwork):
         :param y: Target values
         """
         X, y = self._check_fit_data(X, y)
-        self._labels, Y = one_hot(y)
-        self._output_activation = SoftmaxOutput if Y.shape[1] > 2 else SigmoidOutput
-        initial_weights = self._init_weights(X, Y)
-        weights = self._optimize_params(X, Y, unroll(initial_weights))
-        self._params = self._undo_weights_unroll(weights, X, Y)
+        y = y.reshape(-1, 1)
+        initial_weights = self._init_weights(X, y)
+        weights = self._optimize_params(X, y, unroll(initial_weights))
+        self._params = self._undo_weights_unroll(weights, X, y)
 
     def predict(self, X):
         """Predict target values.
@@ -42,10 +39,4 @@ class ClassificationNeuralNetwork(BaseNeuralNetwork):
         :return: Target values
         """
         X = self._check_data(X)
-
-        predictions = super().predict(X)
-        if len(self._labels) == 2:
-            predictions = (predictions >= 0.5) * 1
-        else:
-            predictions = np.argmax(predictions, axis=1)
-        return self._labels.take(predictions).flatten()
+        return super().predict(X).flatten()
