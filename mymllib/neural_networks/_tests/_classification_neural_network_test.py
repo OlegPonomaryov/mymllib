@@ -1,9 +1,9 @@
-"""Tests for the LogisticRegression class."""
-from mymllib.neural_networks import ClassificationNeuralNetwork
-from mymllib.neural_networks.activations import Sigmoid, Tanh, ReLU, LeakyReLU
-from mymllib._test_data.classification import X, y, y_text, y_bin, test_set_start
+"""Tests for the ClassificationNeuralNetwork class."""
 import pytest
 from numpy.testing import assert_array_equal
+from mymllib._test_data.classification import X, y, y_text, y_bin, test_set_start
+from mymllib.neural_networks import ClassificationNeuralNetwork
+from mymllib.neural_networks.activations import Sigmoid, Tanh, ReLU, LeakyReLU
 
 
 @pytest.mark.parametrize("y", [y_bin, y, y_text])

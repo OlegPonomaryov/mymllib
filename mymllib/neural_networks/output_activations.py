@@ -4,7 +4,7 @@ from mymllib.math.functions import sigmoid, log_loss, softmax, softmax_loss
 
 
 class BaseOutputActivation(ABC):
-    """Base class for activation functions for output layers."""
+    """Base class for activation functions for output layer."""
 
     @staticmethod
     @abstractmethod
@@ -30,7 +30,7 @@ class BaseOutputActivation(ABC):
 
 
 class SigmoidOutput(BaseOutputActivation):
-    """Sigmoid activation functions."""
+    """Sigmoid activation function for output layer."""
 
     @staticmethod
     def activations(x):
@@ -54,7 +54,7 @@ class SigmoidOutput(BaseOutputActivation):
 
 
 class SoftmaxOutput(BaseOutputActivation):
-    """Softmax activation functions."""
+    """Softmax activation function for output layer."""
 
     @staticmethod
     def activations(x):
@@ -75,3 +75,27 @@ class SoftmaxOutput(BaseOutputActivation):
         :return: Loss value
         """
         return softmax_loss(a, y)
+
+
+class IdentityOutput(BaseOutputActivation):
+    """Identity activation function for output layer."""
+
+    @staticmethod
+    def activations(x):
+        """Calculate activation function value.
+
+        :param x: Function argument
+        :return: Activation value
+        """
+        return x
+
+    @staticmethod
+    def loss(a, y):
+        """Calculate loss function value. Its derivative with respect to the activation function's argument should be
+            equal to (activations - y_actual).
+
+        :param a: Activation values
+        :param y: Actual values
+        :return: Loss value
+        """
+        return 0.5*(a - y)**2
