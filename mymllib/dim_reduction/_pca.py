@@ -6,7 +6,7 @@ class PCA(Base):
     """Principal component analysis (PCA) implementation.
 
     :param components_count: Number of components to return (can be used only if min_retained_variance is None)
-    :param min_retained_variance: Minimum retained variance used to automatically select number of components (can be
+    :param min_retainepiod_variance: Minimum retained variance used to automatically select number of components (can be
         used only if components count is None)
     """
 
@@ -22,6 +22,7 @@ class PCA(Base):
 
         self.singular_vectors = None
         self.singular_values = None
+        self.eigenvalues = None
         self.retained_variance = None
 
     def fit(self, X):
@@ -47,6 +48,7 @@ class PCA(Base):
         self.components_count = components_count
         self.singular_vectors = u[:, :components_count]
         self.singular_values = s[:components_count]
+        self.eigenvalues = self.singular_values**2
         self.retained_variance = relative_variance[:components_count]
         return self
 
