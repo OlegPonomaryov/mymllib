@@ -19,8 +19,8 @@ class BaseOutputActivation(ABC):
     @staticmethod
     @abstractmethod
     def loss(a, y):
-        """Calculate loss function value. Its derivative with respect to the activation function's argument should be
-            equal to (activations - y_actual).
+        """Calculate loss function value. Neural network implementation expects its derivative with respect to the
+           output activation function's argument to be (y_pred - y_actual).
 
         :param a: Activation values
         :param y: Actual values
@@ -34,7 +34,7 @@ class SigmoidOutput(BaseOutputActivation):
 
     @staticmethod
     def activations(x):
-        """Calculate activation function value.
+        """Calculate sigmoid activation function value.
 
         :param x: Function argument
         :return: Activation value
@@ -43,8 +43,7 @@ class SigmoidOutput(BaseOutputActivation):
 
     @staticmethod
     def loss(a, y):
-        """Calculate loss function value. Its derivative with respect to the activation function's argument should be
-            equal to (activations - y_actual).
+        """Calculate binary cross entropy loss function value.
 
         :param a: Activation values
         :param y: Actual values
@@ -58,7 +57,7 @@ class SoftmaxOutput(BaseOutputActivation):
 
     @staticmethod
     def activations(x):
-        """Calculate activation function value.
+        """Calculate softmax activation function value.
 
         :param x: Function argument
         :return: Activation value
@@ -67,8 +66,7 @@ class SoftmaxOutput(BaseOutputActivation):
 
     @staticmethod
     def loss(a, y):
-        """Calculate loss function value. Its derivative with respect to the activation function's argument should be
-            equal to (activations - y_actual).
+        """Calculate cross entropy loss function value.
 
         :param a: Activation values
         :param y: Actual values
@@ -82,7 +80,7 @@ class IdentityOutput(BaseOutputActivation):
 
     @staticmethod
     def activations(x):
-        """Calculate activation function value.
+        """Calculate identity activation function value.
 
         :param x: Function argument
         :return: Activation value
@@ -91,8 +89,7 @@ class IdentityOutput(BaseOutputActivation):
 
     @staticmethod
     def loss(a, y):
-        """Calculate loss function value. Its derivative with respect to the activation function's argument should be
-            equal to (activations - y_actual).
+        """Calculate squared error loss function value.
 
         :param a: Activation values
         :param y: Actual values

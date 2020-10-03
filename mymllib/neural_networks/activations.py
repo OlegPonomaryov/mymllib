@@ -33,7 +33,7 @@ class Sigmoid(BaseActivation):
 
     @staticmethod
     def activations(x):
-        """Calculate activation function value.
+        """Calculate sigmoid activation function value.
 
         :param x: Function argument
         :return: Activation value
@@ -42,7 +42,7 @@ class Sigmoid(BaseActivation):
 
     @staticmethod
     def derivative(a):
-        """Calculate activation function derivative.
+        """Calculate sigmoid activation function derivative.
 
         :param a: Activation value
         :return: Activation derivative
@@ -55,7 +55,7 @@ class Tanh(BaseActivation):
 
     @staticmethod
     def activations(x):
-        """Calculate activation function value.
+        """Calculate tanh activation function value.
 
         :param x: Function argument
         :return: Activation value
@@ -64,7 +64,7 @@ class Tanh(BaseActivation):
 
     @staticmethod
     def derivative(a):
-        """Calculate activation function derivative.
+        """Calculate tanh activation function derivative.
 
         :param a: Activation value
         :return: Activation derivative
@@ -77,7 +77,7 @@ class ReLU(BaseActivation):
 
     @staticmethod
     def activations(x):
-        """Calculate activation function value.
+        """Calculate ReLU activation function value.
 
         :param x: Function argument
         :return: Activation value
@@ -86,7 +86,7 @@ class ReLU(BaseActivation):
 
     @staticmethod
     def derivative(a):
-        """Calculate activation function derivative.
+        """Calculate ReLU activation function derivative.
 
         :param a: Activation value
         :return: Activation derivative
@@ -101,7 +101,7 @@ class LeakyReLU(BaseActivation):
 
     @staticmethod
     def activations(x):
-        """Calculate activation function value.
+        """Calculate LeakyReLU activation function value.
 
         :param x: Function argument
         :return: Activation value
@@ -110,7 +110,7 @@ class LeakyReLU(BaseActivation):
 
     @staticmethod
     def derivative(a):
-        """Calculate activation function derivative.
+        """Calculate LeakyReLU activation function derivative.
 
         :param a: Activation value
         :return: Activation derivative
