@@ -2,12 +2,14 @@ from ._base_optimizer import BaseOptimizer
 from scipy.optimize import minimize
 
 
-class LBFGSB(BaseOptimizer):
-    """An optimizer-like wrapper for SciPy L-BFGS-B implementation.
+class SciPyOptimizer(BaseOptimizer):
+    """An adapter to use optimizers from the SciPy library.
 
+    :param method: A method name to pass into scipy.optimize.minimize
     :param options: Options to pass into scipy.optimize.minimize
     """
-    def __init__(self, options=None):
+    def __init__(self, method, options=None):
+        self._method = method
         self._options = options
 
     def minimize(self, func, grad, x0, args=()):
@@ -19,4 +21,4 @@ class LBFGSB(BaseOptimizer):
         :param args: Other arguments of the function
         :return: The best arguments array optimizer was able to find to minimize the function
         """
-        return minimize(func, x0, args=args, method='L-BFGS-B', jac=grad, options=self._options).x
+        return minimize(func, x0, args=args, method=self._method, jac=grad, options=self._options).x

@@ -1,7 +1,7 @@
 """Tests for optimizers (subclasses of the BaseOptimizer class)."""
 import pytest
 from numpy.testing import assert_allclose
-from mymllib.optimization import GradientDescent, LBFGSB
+from mymllib.optimization import GradientDescent, SciPyOptimizer
 from mymllib.preprocessing import to_numpy
 
 
@@ -16,8 +16,8 @@ def grad_f(x):
 min_f = to_numpy([0, 0, 0])  # Minimum of f()
 
 
-@pytest.mark.parametrize("optimizer", [GradientDescent(), LBFGSB()])
-def test_fit_predict(optimizer):
+@pytest.mark.parametrize("optimizer", [GradientDescent(max_iterations=10000), SciPyOptimizer("L-BFGS-B")])
+def test_minimize(optimizer):
     x0 = to_numpy([-7, 15, 4])
     x = optimizer.minimize(f, grad_f, x0)
     assert_allclose(x, min_f, atol=1E-5)

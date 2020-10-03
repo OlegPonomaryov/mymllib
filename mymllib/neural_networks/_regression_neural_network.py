@@ -2,7 +2,7 @@ from mymllib.neural_networks import BaseNeuralNetwork
 from mymllib.optimization import unroll
 from mymllib.neural_networks.activations import Sigmoid
 from mymllib.neural_networks.output_activations import IdentityOutput
-from mymllib.optimization import LBFGSB
+from mymllib.optimization import SciPyOptimizer
 
 
 class RegressionNeuralNetwork(BaseNeuralNetwork):
@@ -15,7 +15,8 @@ class RegressionNeuralNetwork(BaseNeuralNetwork):
     :param activation: Activation function for the neural network
     """
 
-    def __init__(self, hidden_layers=(), regularization_param=0, optimizer=LBFGSB(), activation=Sigmoid):
+    def __init__(self, hidden_layers=(), regularization_param=0, optimizer=SciPyOptimizer("L-BFGS-B"),
+                 activation=Sigmoid):
         super().__init__(hidden_layers=hidden_layers, regularization_param=regularization_param,
                          optimizer=optimizer, activation=activation)
         self._output_activation = IdentityOutput

@@ -4,7 +4,7 @@ from mymllib.preprocessing import one_hot
 from mymllib.optimization import unroll
 from mymllib.neural_networks.activations import Sigmoid
 from mymllib.neural_networks.output_activations import SigmoidOutput, SoftmaxOutput
-from mymllib.optimization import LBFGSB
+from mymllib.optimization import SciPyOptimizer
 
 
 class ClassificationNeuralNetwork(BaseNeuralNetwork):
@@ -17,7 +17,8 @@ class ClassificationNeuralNetwork(BaseNeuralNetwork):
     :param activation: Activation function for the neural network
     """
 
-    def __init__(self, hidden_layers=(), regularization_param=0, optimizer=LBFGSB(), activation=Sigmoid):
+    def __init__(self, hidden_layers=(), regularization_param=0, optimizer=SciPyOptimizer("L-BFGS-B"),
+                 activation=Sigmoid):
         super().__init__(hidden_layers=hidden_layers, regularization_param=regularization_param,
                          optimizer=optimizer, activation=activation)
         self._labels = None

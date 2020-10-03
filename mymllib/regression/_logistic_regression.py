@@ -1,5 +1,5 @@
 import numpy as np
-from mymllib.optimization import LBFGSB, unroll, undo_unroll
+from mymllib.optimization import SciPyOptimizer, unroll, undo_unroll
 from mymllib.preprocessing import add_intercept, one_hot
 from mymllib.regression._linear_regression import BaseRegression
 from mymllib.math.functions import sigmoid, log_cost, softmax, softmax_cost
@@ -15,7 +15,7 @@ class LogisticRegression(BaseRegression):
     :param optimizer: An optimizer to use for minimizing a cost function
     """
 
-    def __init__(self, regularization_param=0, use_softmax=False, optimizer=LBFGSB()):
+    def __init__(self, regularization_param=0, use_softmax=False, optimizer=SciPyOptimizer("L-BFGS-B")):
         super().__init__(regularization_param=regularization_param, optimizer=optimizer)
         self._labels = None
         self._use_softmax = use_softmax

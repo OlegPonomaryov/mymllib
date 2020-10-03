@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.spatial import KDTree
 from mymllib import BaseSupervisedModel
-from mymllib.optimization import LBFGSB, unroll, undo_unroll
+from mymllib.optimization import SciPyOptimizer, unroll, undo_unroll
 from mymllib.tools import glorot_init
 from mymllib.preprocessing import to_numpy
 
@@ -14,7 +14,7 @@ class CollaborativeFiltering(BaseSupervisedModel):
         used)
     :param optimizer: An optimizer to use for minimizing a cost function (if None than analytical method will be used)
     """
-    def __init__(self, features_count, regularization_param=0, optimizer=LBFGSB()):
+    def __init__(self, features_count, regularization_param=0, optimizer=SciPyOptimizer("L-BFGS-B")):
         self._features_count = features_count
         self._regularization_param = regularization_param
         self._optimizer = optimizer

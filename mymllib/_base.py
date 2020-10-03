@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import numpy as np
 from mymllib.preprocessing import to_numpy
-from mymllib.optimization import LBFGSB
+from mymllib.optimization import SciPyOptimizer
 
 
 class Base(ABC):
@@ -65,7 +65,7 @@ class BaseSupervisedModel(BaseModel):
     :param optimizer: An optimizer to use for minimizing a cost function
     """
 
-    def __init__(self, regularization_param, optimizer=LBFGSB()):
+    def __init__(self, regularization_param, optimizer=SciPyOptimizer("L-BFGS-B")):
         assert regularization_param >= 0, "Regularization parameter must be >= 0, but was negative."
         self._regularization_param = regularization_param
         self._params = None

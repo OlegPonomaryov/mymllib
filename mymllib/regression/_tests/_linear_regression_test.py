@@ -4,7 +4,7 @@ import numpy as np
 from numpy.testing import assert_allclose
 from mymllib._test_data.regression import X_train, y_train, X_test, y_test
 from mymllib.regression import LinearRegression
-from mymllib.optimization import LBFGSB
+from mymllib.optimization import SciPyOptimizer
 from mymllib.math.tools import gradient
 from mymllib.preprocessing import to_numpy
 
@@ -31,7 +31,7 @@ def test_predict__invalid_input_shapes(X_test):
         linear_regression.predict(X_test)
 
 
-@pytest.mark.parametrize("optimizer", [None, LBFGSB()])
+@pytest.mark.parametrize("optimizer", [None, SciPyOptimizer("L-BFGS-B")])
 @pytest.mark.parametrize("regularization_param", [0, 0.01])
 def test_fit_predict(optimizer, regularization_param):
     linear_regression = LinearRegression(optimizer=optimizer, regularization_param=regularization_param)
