@@ -2,7 +2,7 @@ import numpy as np
 from mymllib import BaseSupervisedModel
 from mymllib.preprocessing import add_intercept as add_bias
 from mymllib.optimization import unroll, undo_unroll
-from mymllib.neural_networks.activations import Sigmoid
+from mymllib.neural_networks.activations import Sigmoid, ReLU
 from mymllib.optimization import SciPyOptimizer
 from mymllib.tools import glorot_init
 
@@ -18,7 +18,7 @@ class BaseNeuralNetwork(BaseSupervisedModel):
     """
 
     def __init__(self, hidden_layers=(), regularization_param=0, optimizer=SciPyOptimizer("L-BFGS-B"),
-                 activation=Sigmoid):
+                 activation=ReLU):
         super().__init__(regularization_param=regularization_param, optimizer=optimizer)
         self._hidden_layers = hidden_layers
         self._activation = activation

@@ -10,7 +10,7 @@ class LogisticRegression(BaseRegression):
 
     :param regularization_param: L2 regularization parameter (must be >= 0, when set exactly to 0 no regularization is
         used)
-    :param use_softmax: Whether to use softmax function for multiclass problemы or to use logistic function for each of
+    :param use_softmax: Whether to use softmax function for multiclass problems or to use logistic function for each of
         the classes (one vs all) and select one class that maximizes logistic function value
     :param optimizer: An optimizer to use for minimizing a cost function
     """

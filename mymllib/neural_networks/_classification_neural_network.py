@@ -2,7 +2,7 @@ import numpy as np
 from mymllib.neural_networks import BaseNeuralNetwork
 from mymllib.preprocessing import one_hot
 from mymllib.optimization import unroll
-from mymllib.neural_networks.activations import Sigmoid
+from mymllib.neural_networks.activations import ReLU
 from mymllib.neural_networks.output_activations import SigmoidOutput, SoftmaxOutput
 from mymllib.optimization import SciPyOptimizer
 
@@ -18,7 +18,7 @@ class ClassificationNeuralNetwork(BaseNeuralNetwork):
     """
 
     def __init__(self, hidden_layers=(), regularization_param=0, optimizer=SciPyOptimizer("L-BFGS-B"),
-                 activation=Sigmoid):
+                 activation=ReLU):
         super().__init__(hidden_layers=hidden_layers, regularization_param=regularization_param,
                          optimizer=optimizer, activation=activation)
         self._labels = None
