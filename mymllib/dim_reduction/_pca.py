@@ -6,7 +6,7 @@ class PCA(Base):
     """Principal component analysis (PCA) implementation.
 
     :param components_count: Number of components to return (can be used only if min_retained_variance is None)
-    :param min_retainepiod_variance: Minimum retained variance used to automatically select number of components (can be
+    :param min_retained_variance: Minimum retained variance used to automatically select number of components (can be
         used only if components count is None)
     """
 
