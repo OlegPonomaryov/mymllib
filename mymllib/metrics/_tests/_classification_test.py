@@ -1,30 +1,48 @@
 """Tests for the 'classification' module."""
 import pytest
 import numpy as np
-from mymllib.metrics.classification import precision, recall, f1_score
+from mymllib.metrics.classification import accuracy, balanced_accuracy, precision, recall, f1_score
 
 
 actual_values = ["A", "C", "B", "C"]
 predicted_values = ["B", "D", "B", "C"]
 
 
-@pytest.mark.parametrize("func", [precision, recall, f1_score])
+@pytest.mark.parametrize("func", [accuracy, balanced_accuracy, precision, recall, f1_score])
 @pytest.mark.parametrize("actual, predicted", [
     (np.ones(5), np.ones((5, 1))),
     (np.ones((5, 1)), np.ones(5)),
     (np.ones((5, 1)), np.ones((5, 1)))])
-def test_precision_recall_f1_score__invalid_input_dimensions(func, actual, predicted):
+def test_precision_classification_metrics__invalid_input_dimensions(func, actual, predicted):
     with pytest.raises(ValueError):
-        func(actual, predicted, target_label=1)
+        func(actual, predicted)
 
 
-@pytest.mark.parametrize("func", [precision, recall, f1_score])
+@pytest.mark.parametrize("func", [accuracy, balanced_accuracy, precision, recall, f1_score])
 @pytest.mark.parametrize("actual, predicted", [
     (np.ones(5), np.ones(4)),
     (np.ones(4), np.ones(5))])
-def test_precision_recall_f1_score__input_shapes_mismatch(func, actual, predicted):
+def test_classification_metrics__input_shapes_mismatch(func, actual, predicted):
     with pytest.raises(ValueError):
-        func(actual, predicted, target_label=1)
+        func(actual, predicted)
+
+
+def test_accuracy():
+    y_actual = ["A", "B", "B", "B"]
+    y_predicted = ["B", "B", "B", "B"]
+
+    score = accuracy(y_actual, y_predicted)
+
+    assert score == 0.75
+
+
+def test_balanced_accuracy():
+    y_actual = ["A", "B", "B", "B"]
+    y_predicted = ["B", "B", "B", "B"]
+
+    score = balanced_accuracy(y_actual, y_predicted)
+
+    assert score == 0.5
 
 
 @pytest.mark.parametrize("target_label, expectation", [("A", 0),  ("B", 0.5), ("C", 1), ("D", 0)])

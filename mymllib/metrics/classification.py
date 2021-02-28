@@ -2,8 +2,40 @@ import numpy as np
 from ._common import _check_input
 
 
+def accuracy(y_actual, y_predicted):
+    """Calculate the accuracy of predictions.
+
+    :param y_actual: Actual labels
+    :param y_predicted: Predicted labels
+    :return: Accuracy value
+    """
+    y_actual, y_predicted = _check_input(y_actual, y_predicted)
+
+    return (y_actual == y_predicted).sum() / y_actual.size
+
+
+def balanced_accuracy(y_actual, y_predicted):
+    """Calculate the balanced accuracy of predictions.
+
+    :param y_actual: Actual labels
+    :param y_predicted: Predicted labels
+    :return: Balanced accuracy value
+    """
+    y_actual, y_predicted = _check_input(y_actual, y_predicted)
+
+    labels = np.unique(y_actual)
+    total_score = 0
+
+    for label in labels:
+        mask = y_actual == label
+        score = (y_actual[mask] == y_predicted[mask]).sum() / mask.sum()
+        total_score += score
+
+    return total_score / labels.size
+
+
 def precision(y_actual, y_predicted, target_label=1):
-    """Calculate the precision of a prediction.
+    """Calculate the precision of predictions.
 
     :param y_actual: Actual labels
     :param y_predicted: Predicted labels
@@ -16,7 +48,7 @@ def precision(y_actual, y_predicted, target_label=1):
 
 
 def recall(y_actual, y_predicted, target_label=1):
-    """Calculate the recall of a prediction.
+    """Calculate the recall of predictions.
 
     :param y_actual: Actual labels
     :param y_predicted: Predicted labels
@@ -29,7 +61,7 @@ def recall(y_actual, y_predicted, target_label=1):
 
 
 def f1_score(y_actual, y_predicted, target_label=1, use_target_for_multiclass=False):
-    """Calculate the F1 score a prediction.
+    """Calculate the F1 score predictions.
 
     :param y_actual: Actual labels
     :param y_predicted: Predicted labels
