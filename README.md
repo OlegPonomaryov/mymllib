@@ -12,5 +12,6 @@ There are some **demo notebooks** that show usage of the **mymllib**:
 2. [Classification of wine from different cultivars](./demo/wine_classification.ipynb)
 3. [Clustering of benign and malignant cells](./demo/cells_clustering.ipynb)
 4. [Tweets sentiment classification with naive Bayes](./demo/tweets_classification.ipynb)
+5. [POS tagging with Hidden Markov model](./demo/pos_tagging.ipynb)
 
 This library is, of course, no more than a study project and it isn't meant for any kind of professional usage. [Scikit-learn](https://scikit-learn.org) is probably the most popular solution for the majority of ML tasks not involving Deep Learning.

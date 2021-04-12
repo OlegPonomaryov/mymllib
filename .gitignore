@@ -8,5 +8,6 @@ __pycache__
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints
 
-# Twitter Airline Sentiment dataset
+# Datasets
 demo/twitter_airline_sentiment
+demo/ner_dataset
